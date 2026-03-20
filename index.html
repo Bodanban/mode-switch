@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Mode Switch — Tableau de bord opérationnel personnel">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <title>MODE SWITCH</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ========================================================
+       SCREEN: HOME
+  ======================================================== -->
+  <div id="screen-home" class="screen active">
+
+    <!-- HEADER BAR -->
+    <div class="header-bar">
+      <div class="header-clock">
+        <span class="clock-time" id="clock-time">00:00:00</span>
+        <span class="clock-date" id="clock-date">—</span>
+      </div>
+      <div class="header-center">
+        <span class="system-quote" id="system-quote">Le protocole prime sur l'émotion.</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-ghost btn-small" id="btn-theme-toggle" title="Basculer thème" aria-label="Basculer thème clair/sombre">◐</button>
+        <button class="btn-ghost btn-small" id="btn-universal" title="Règles universelles [U]" aria-label="Ouvrir règles universelles">⊞</button>
+        <button class="btn-ghost btn-small" id="btn-fullscreen" title="Plein écran [F]" aria-label="Activer plein écran">⤢</button>
+      </div>
+    </div>
+
+    <!-- SUGGESTION BANNER -->
+    <div class="suggestion-banner" id="suggestion-banner" style="display:none;" role="alert" aria-live="polite">
+      <span class="suggestion-icon">→</span>
+      <span class="suggestion-text" id="suggestion-text">Suggestion…</span>
+      <button class="suggestion-action btn-ghost btn-small" id="suggestion-action-btn">APPLIQUER</button>
+      <button class="suggestion-dismiss btn-ghost btn-small" id="suggestion-dismiss" aria-label="Fermer suggestion">✕</button>
+    </div>
+
+    <!-- LAST MODE INDICATOR -->
+    <div class="last-mode-indicator" id="last-mode-indicator" style="display:none;">
+      <span class="last-mode-label">DERNIER MODE :</span>
+      <span class="last-mode-name" id="last-mode-name">—</span>
+      <span class="last-mode-time" id="last-mode-time">—</span>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="home-main">
+      <div class="home-title-block">
+        <h1 class="home-title">MODE SWITCH</h1>
+        <p class="home-subtitle">Identifie ton mode. Applique le protocole. Exécute.</p>
+      </div>
+
+      <!-- MODE GRID -->
+      <section class="mode-grid" id="mode-grid" aria-label="Sélection du mode">
+        <!-- Rendered dynamically by JS -->
+      </section>
+
+      <!-- HOME ACTIONS -->
+      <div class="home-actions" id="home-actions">
+        <button class="btn-primary btn-enter" id="btn-enter-mode" disabled aria-label="Entrer dans le mode sélectionné">
+          ENTRER DANS LE MODE
+        </button>
+        <button class="btn-secondary" id="btn-reset-env" title="Reset environnement [R]">
+          RESET ENVIRONNEMENT
+        </button>
+        <button class="btn-danger" id="btn-emergency" title="Urgence / Reprise [U]">
+          URGENCE / REPRISE
+        </button>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="home-footer">
+      <div class="shortcuts-hint">
+        <span>Raccourcis : <kbd>1–7</kbd> mode · <kbd>Entrée</kbd> confirmer · <kbd>R</kbd> reset · <kbd>U</kbd> urgence · <kbd>T</kbd> timer · <kbd>?</kbd> aide</span>
+      </div>
+    </footer>
+
+  </div><!-- /#screen-home -->
+
+
+  <!-- ========================================================
+       SCREEN: MODE (active mode protocol)
+  ======================================================== -->
+  <div id="screen-mode" class="screen" style="display:none;" aria-live="polite">
+
+    <!-- MODE HEADER -->
+    <div class="mode-header" id="mode-header">
+      <div class="mode-header-left">
+        <button class="btn-ghost btn-back" id="btn-back" aria-label="Retour à l'accueil">← RETOUR</button>
+        <div class="mode-header-info">
+          <h2 class="mode-name" id="mode-name">—</h2>
+          <div class="mode-meta">
+            <span class="mode-badge" id="mode-badge">—</span>
+            <span class="mode-energy" id="mode-energy">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="mode-header-right">
+        <div class="mode-intent" id="mode-intent">—</div>
+        <div class="mode-when" id="mode-when">—</div>
+      </div>
+    </div>
+
+    <!-- MODE OBJECTIVE -->
+    <div class="mode-objective-block" id="mode-objective-block">
+      <div class="block-label">OBJECTIF DU JOUR</div>
+      <div class="mode-objective" id="mode-objective">—</div>
+    </div>
+
+    <!-- CRITICAL RULES -->
+    <div class="critical-rules" id="critical-rules">
+      <div class="block-label critical-label">CRITIQUE — RÈGLES NON-NÉGOCIABLES</div>
+      <ul class="critical-list" id="critical-list">
+        <!-- Rendered by JS -->
+      </ul>
+    </div>
+
+    <!-- MODE BODY (two-column) -->
+    <div class="mode-body" id="mode-body">
+
+      <!-- MAIN COLUMN -->
+      <div class="mode-main-col">
+
+        <!-- PLANNING BLOCK -->
+        <section class="mode-section planning-block" id="planning-block">
+          <div class="block-label">PLANNING HORAIRE</div>
+          <div class="time-blocks" id="time-blocks">
+            <!-- Rendered by JS -->
+          </div>
+        </section>
+
+        <!-- INTERDICTIONS BLOCK -->
+        <section class="mode-section interdictions-block" id="interdictions-block">
+          <div class="block-label">INTERDICTIONS</div>
+          <ul class="interdictions-list" id="interdictions-list">
+            <!-- Rendered by JS -->
+          </ul>
+        </section>
+
+        <!-- BEHAVIORAL LAYER -->
+        <section class="mode-section behavioral-layer" id="behavioral-layer">
+          <div class="block-label">COUCHE COMPORTEMENTALE</div>
+          <div class="behavioral-grid" id="behavioral-grid">
+            <div class="behavioral-item">
+              <div class="behavioral-item-label">QUAND CE MODE S'ACTIVE</div>
+              <div class="behavioral-item-value" id="beh-when">—</div>
+            </div>
+            <div class="behavioral-item">
+              <div class="behavioral-item-label">ERREUR CLASSIQUE</div>
+              <div class="behavioral-item-value error-item" id="beh-error">—</div>
+            </div>
+            <div class="behavioral-item">
+              <div class="behavioral-item-label">CE QUI VALIDE LA JOURNÉE</div>
+              <div class="behavioral-item-value" id="beh-validation">—</div>
+            </div>
+            <div class="behavioral-item">
+              <div class="behavioral-item-label">SIGNAL DE SORTIE</div>
+              <div class="behavioral-item-value" id="beh-exit">—</div>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /.mode-main-col -->
+
+      <!-- SIDEBAR COLUMN -->
+      <div class="mode-sidebar-col">
+
+        <!-- CORE BLOCK -->
+        <section class="mode-section core-block" id="core-block">
+          <div class="block-label">NOYAU NON-NÉGOCIABLE</div>
+          <ul class="core-list" id="core-list">
+            <!-- Rendered by JS -->
+          </ul>
+        </section>
+
+        <!-- START CHECKLIST -->
+        <section class="mode-section checklist-section" id="start-checklist-section">
+          <div class="block-label">CHECKLIST DÉMARRAGE</div>
+          <ul class="checklist-list" id="start-checklist" data-list-type="start">
+            <!-- Rendered by JS -->
+          </ul>
+          <button class="btn-ghost btn-small check-all-btn" data-target="start">TOUT COCHER</button>
+        </section>
+
+        <!-- END CHECKLIST -->
+        <section class="mode-section checklist-section" id="end-checklist-section">
+          <div class="block-label">CHECKLIST FIN DE JOURNÉE</div>
+          <ul class="checklist-list" id="end-checklist" data-list-type="end">
+            <!-- Rendered by JS -->
+          </ul>
+          <button class="btn-ghost btn-small check-all-btn" data-target="end">TOUT COCHER</button>
+        </section>
+
+        <!-- NEXT MODE SUGGESTION -->
+        <section class="mode-section next-mode-suggestion" id="next-mode-suggestion">
+          <div class="block-label">MODE SUIVANT SUGGÉRÉ</div>
+          <div class="next-modes" id="next-modes">
+            <!-- Rendered by JS -->
+          </div>
+          <div class="transition-note" id="transition-note">—</div>
+        </section>
+
+        <!-- TIMER WIDGET -->
+        <section class="mode-section timer-widget" id="timer-widget">
+          <div class="block-label">TIMER</div>
+          <div class="timer-display" id="timer-display" aria-live="polite" aria-atomic="true">20:00</div>
+          <div class="timer-presets">
+            <button class="btn-ghost btn-small timer-preset" data-minutes="15">15 min</button>
+            <button class="btn-ghost btn-small timer-preset active" data-minutes="20">20 min</button>
+            <button class="btn-ghost btn-small timer-preset" data-minutes="60">60 min</button>
+            <button class="btn-ghost btn-small timer-preset" data-minutes="90">90 min</button>
+          </div>
+          <div class="timer-controls">
+            <button class="btn-primary btn-small" id="btn-timer-start">DÉMARRER</button>
+            <button class="btn-secondary btn-small" id="btn-timer-reset">RESET</button>
+            <button class="btn-ghost btn-small" id="btn-timer-fullscreen" title="Plein écran timer [F]">⤢</button>
+          </div>
+          <div class="timer-progress-bar">
+            <div class="timer-progress-fill" id="timer-progress-fill" style="width:100%"></div>
+          </div>
+        </section>
+
+      </div><!-- /.mode-sidebar-col -->
+    </div><!-- /.mode-body -->
+
+    <!-- MODE ACTIONS -->
+    <div class="mode-actions" id="mode-actions">
+      <button class="btn-secondary" id="btn-back-2">RETOUR</button>
+      <button class="btn-secondary" id="btn-change-mode">CHANGER DE MODE</button>
+      <button class="btn-primary" id="btn-execute">J'EXÉCUTE</button>
+      <button class="btn-secondary" id="btn-copy-protocol" title="Copier le protocole">COPIER PROTOCOLE</button>
+      <button class="btn-secondary" id="btn-print">IMPRIMER</button>
+      <button class="btn-danger" id="btn-mode-done">MODE TERMINÉ / RÉCUPÉRATION</button>
+    </div>
+
+    <!-- COPY CONFIRMATION -->
+    <div class="copy-confirmation" id="copy-confirmation" aria-live="polite" style="display:none;">
+      Copié !
+    </div>
+
+    <!-- MODE SCREEN FOOTER -->
+    <footer class="mode-footer">
+      <div class="shortcuts-hint">
+        <kbd>Échap</kbd> retour · <kbd>T</kbd> timer · <kbd>F</kbd> timer plein écran · <kbd>R</kbd> reset · <kbd>U</kbd> urgence · <kbd>?</kbd> aide
+      </div>
+    </footer>
+
+  </div><!-- /#screen-mode -->
+
+
+  <!-- ========================================================
+       MODAL: RESET ENVIRONMENT
+  ======================================================== -->
+  <div id="modal-reset" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-reset-title" style="display:none;">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-reset-title">RESET ENVIRONNEMENT</h2>
+        <button class="btn-ghost modal-close" data-modal="modal-reset" aria-label="Fermer">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-description">Effectuer ce reset avant tout bloc de travail. État des cases : non persisté (par design).</p>
+        <ul class="checklist-list" id="reset-checklist">
+          <!-- Rendered by JS -->
+        </ul>
+        <div class="modal-actions">
+          <button class="btn-secondary" id="btn-reset-all">TOUT COCHER</button>
+          <button class="btn-ghost" id="btn-reset-clear">EFFACER TOUT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================
+       MODAL: EMERGENCY / PROTOCOLS
+  ======================================================== -->
+  <div id="modal-emergency" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-emergency-title" style="display:none;">
+    <div class="modal-container modal-wide">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-emergency-title">PROTOCOLES D'URGENCE</h2>
+        <button class="btn-ghost modal-close" data-modal="modal-emergency" aria-label="Fermer">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-description">Identifie la situation. Applique le protocole immédiatement. Ne pas analyser d'abord — agir d'abord.</p>
+        <div class="emergency-protocols" id="emergency-protocols">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================
+       MODAL: UNIVERSAL RULES + SYSTEM MATERIAL
+  ======================================================== -->
+  <div id="modal-universal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-universal-title" style="display:none;">
+    <div class="modal-container modal-wide">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-universal-title">RÈGLES UNIVERSELLES & SYSTÈME</h2>
+        <button class="btn-ghost modal-close" data-modal="modal-universal" aria-label="Fermer">✕</button>
+      </div>
+      <div class="modal-body">
+
+        <div class="universal-tabs">
+          <button class="universal-tab active" data-tab="rules">RÈGLES</button>
+          <button class="universal-tab" data-tab="medical">CONTENU MÉDICAL</button>
+          <button class="universal-tab" data-tab="nutrition">NUTRITION</button>
+          <button class="universal-tab" data-tab="material">MATIÈRE SYSTÈME</button>
+        </div>
+
+        <div class="universal-tab-content" id="tab-rules">
+          <ul class="universal-list" id="universal-rules-list">
+            <!-- Rendered by JS -->
+          </ul>
+        </div>
+
+        <div class="universal-tab-content" id="tab-medical" style="display:none;">
+          <ul class="universal-list" id="medical-rules-list">
+            <!-- Rendered by JS -->
+          </ul>
+        </div>
+
+        <div class="universal-tab-content" id="tab-nutrition" style="display:none;">
+          <ul class="universal-list" id="nutrition-list">
+            <!-- Rendered by JS -->
+          </ul>
+        </div>
+
+        <div class="universal-tab-content" id="tab-material" style="display:none;">
+          <ul class="universal-list" id="material-list">
+            <!-- Rendered by JS -->
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================
+       TIMER FULLSCREEN OVERLAY
+  ======================================================== -->
+  <div id="timer-fullscreen" class="timer-fullscreen-overlay" role="dialog" aria-modal="true" aria-label="Timer plein écran" style="display:none;">
+    <div class="timer-fullscreen-content">
+      <div class="timer-fs-display" id="timer-fs-display" aria-live="polite" aria-atomic="true">20:00</div>
+      <div class="timer-fs-label" id="timer-fs-label">TIMER</div>
+      <div class="timer-fs-progress-bar">
+        <div class="timer-fs-progress-fill" id="timer-fs-progress-fill" style="width:100%"></div>
+      </div>
+      <div class="timer-fs-controls">
+        <button class="btn-primary" id="btn-fs-timer-start">DÉMARRER</button>
+        <button class="btn-secondary" id="btn-fs-timer-reset">RESET</button>
+        <button class="btn-ghost" id="btn-fs-timer-close" aria-label="Fermer timer plein écran">FERMER [F]</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================
+       KEYBOARD SHORTCUTS OVERLAY
+  ======================================================== -->
+  <div id="modal-shortcuts" class="modal-overlay modal-shortcuts-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-shortcuts-title" style="display:none;">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-shortcuts-title">RACCOURCIS CLAVIER</h2>
+        <button class="btn-ghost modal-close" data-modal="modal-shortcuts" aria-label="Fermer">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="shortcuts-grid">
+          <div class="shortcut-row"><kbd>1</kbd><span>Mode Normal</span></div>
+          <div class="shortcut-row"><kbd>2</kbd><span>Mode Stage</span></div>
+          <div class="shortcut-row"><kbd>3</kbd><span>Mode Pré-Garde</span></div>
+          <div class="shortcut-row"><kbd>4</kbd><span>Mode Garde</span></div>
+          <div class="shortcut-row"><kbd>5</kbd><span>Mode Recovery</span></div>
+          <div class="shortcut-row"><kbd>6</kbd><span>Mode Off</span></div>
+          <div class="shortcut-row"><kbd>7</kbd><span>Mode Reprise</span></div>
+          <div class="shortcut-row"><kbd>Entrée</kbd><span>Entrer dans le mode / Confirmer</span></div>
+          <div class="shortcut-row"><kbd>Échap</kbd><span>Retour / Fermer modal</span></div>
+          <div class="shortcut-row"><kbd>R</kbd><span>Ouvrir Reset Environnement</span></div>
+          <div class="shortcut-row"><kbd>U</kbd><span>Ouvrir Urgence / Protocoles</span></div>
+          <div class="shortcut-row"><kbd>T</kbd><span>Ouvrir / Focaliser Timer</span></div>
+          <div class="shortcut-row"><kbd>F</kbd><span>Timer Plein Écran</span></div>
+          <div class="shortcut-row"><kbd>Space</kbd><span>Démarrer / Arrêter Timer</span></div>
+          <div class="shortcut-row"><kbd>D</kbd><span>Basculer thème sombre/clair</span></div>
+          <div class="shortcut-row"><kbd>P</kbd><span>Imprimer le protocole actif</span></div>
+          <div class="shortcut-row"><kbd>?</kbd><span>Afficher cette aide</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Screen reader announcer -->
+  <div id="sr-announcer" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="modes.js"></script>
+  <script src="app.js" defer></script>
+</body>
+</html>

@@ -15,6 +15,18 @@ const MODES = {
     objective: 'Exécuter les 2 blocs profonds. Méditer. Bouger. Réciter. Dormir à l\'heure.',
     when: 'Journée standard sans garde ni récupération. Contexte normal, système intact.',
 
+    immediateAction: 'Réveil 05:30 — debout, 50 pompes, douche, méditation. Pas d\'écran.',
+
+    blocks: [
+      { id: 'matin',    label: 'MATIN',          anchor: '05:30', desc: 'Routine complète — physique · hygiène · méditation · petit-déjeuner · bloc 1 médecine' },
+      { id: 'journee',  label: 'JOURNÉE',         anchor: null,    desc: 'Vie réelle + obligations — bloc 2 médecine intégré dans les plages libres' },
+      { id: 'fin',      label: 'FIN DE JOURNÉE',  anchor: null,    desc: 'Sport · hygiène · repas du soir' },
+      { id: 'soir',     label: 'SOIR',            anchor: '21:30', desc: 'Récitation · wind down · sommeil 21:30' },
+    ],
+
+    interdictionsShort: 'Scroll · multitâche · contenu long',
+    validationShort: 'Bloc 1 + sport + sommeil',
+
     planning: [
       { time: '05:30', action: 'Réveil', type: 'anchor' },
       { time: '05:30–05:45', action: '50 pompes + 50 abdos', type: 'physical' },
@@ -91,6 +103,18 @@ const MODES = {
     objective: 'Être pleinement présent au stage. Maintenir 1 bloc d\'étude le soir ou le matin. Ne pas s\'effondrer.',
     when: 'Journée de stage hospitalier ou terrain. Présence physique et cognitive requise en externat.',
 
+    immediateAction: 'Réveil 05:30 — routine matin · révision rapide · départ stage à l\'heure.',
+
+    blocks: [
+      { id: 'matin',    label: 'MATIN',          anchor: '05:30', desc: 'Routine + bloc court révision — physique · hygiène · méditation · départ' },
+      { id: 'journee',  label: 'JOURNÉE',         anchor: null,    desc: 'Stage — présence totale, observation active, pas de téléphone pendant les soins' },
+      { id: 'fin',      label: 'FIN DE JOURNÉE',  anchor: null,    desc: 'Hygiène · repas · bloc étude 45 min minimum' },
+      { id: 'soir',     label: 'SOIR',            anchor: '21:30', desc: 'Récitation · wind down · sommeil 21:30' },
+    ],
+
+    interdictionsShort: 'Passivité après stage · scroll',
+    validationShort: 'Présence stage + 1 bloc + sommeil',
+
     planning: [
       { time: '05:30', action: 'Réveil', type: 'anchor' },
       { time: '05:30–05:45', action: 'Mobilisation physique légère (pompes, étirements)', type: 'physical' },
@@ -162,6 +186,19 @@ const MODES = {
     intent: 'Maximiser les réserves avant la garde. Préparer le corps et l\'esprit.',
     objective: 'Dormir tôt. Manger correctement. Réduire la charge cognitive. Se préparer sans s\'épuiser.',
     when: 'Veille de garde. La garde commence demain matin ou dans la nuit.',
+
+    immediateAction: 'Préparation système — routine légère · bloc unique d\'étude ciblée urgences.',
+
+    blocks: [
+      { id: 'matin',    label: 'MATIN',           anchor: null,    desc: 'Routine légère · bloc unique étude urgences · petit-déjeuner complet' },
+      { id: 'journee',  label: 'JOURNÉE',          anchor: null,    desc: 'Logistique garde · repas nourrissant · hygiène · tâches légères uniquement' },
+      { id: 'central',  label: 'SIESTE',           anchor: '12:30', desc: 'Sieste obligatoire — 60 à 90 min. Non-négociable.' },
+      { id: 'fin',      label: 'FIN DE JOURNÉE',   anchor: '16:00', desc: 'Préparation sac de garde · repas du soir complet' },
+      { id: 'soir',     label: 'SOIR',             anchor: '20:30', desc: 'Wind down total · aucun écran stimulant · sommeil anticipé 20:30' },
+    ],
+
+    interdictionsShort: 'Effort intense · écran · stimulation',
+    validationShort: 'Sieste + préparation + sommeil anticipé',
 
     planning: [
       { time: '05:30', action: 'Réveil (si possible, ne pas forcer)', type: 'anchor' },
@@ -239,6 +276,18 @@ const MODES = {
     objective: 'Assurer la garde avec compétence et calme. Utiliser les temps morts pour réviser. Rentrer et se coucher.',
     when: 'Journée ou nuit de garde aux urgences ou en service. Mode opérationnel extrême.',
 
+    immediateAction: 'Prise de poste — briefing · identification priorités · repas si pas fait.',
+
+    blocks: [
+      { id: 'continu',  label: 'EN CONTINU',      anchor: null,    desc: 'Soins · décisions cliniques · transmission propre' },
+      { id: 'opportun', label: 'TEMPS MORT',       anchor: null,    desc: 'Micro-sieste dès possible — fermer les yeux. Pas d\'écran.' },
+      { id: 'physio',   label: 'PHYSIOLOGIQUE',    anchor: null,    desc: 'Manger même sans faim · boire · uriner · hygiène minimale' },
+      { id: 'retour',   label: 'RETOUR',           anchor: null,    desc: 'Transmission soignée · rentrer direct · hygiène · sommeil immédiat' },
+    ],
+
+    interdictionsShort: 'Deep work · contenu · sport',
+    validationShort: 'Garde tenue + sommeil',
+
     planning: [
       { time: 'Début garde', action: 'Briefing, prise de poste, identification priorités', type: 'anchor' },
       { time: 'En continu', action: 'Soins, observations, décisions cliniques', type: 'deep' },
@@ -311,6 +360,18 @@ const MODES = {
     intent: 'Récupération structurée. Pas de repos passif — récupération active et intentionnelle.',
     objective: 'Dormir autant que nécessaire. Manger proprement. Bouger doucement. Ne rien forcer.',
     when: 'Post-garde (24–48h après), post-surmenage, ou après une séquence intense. Corps et esprit à restaurer.',
+
+    immediateAction: 'Nourrir le corps — hydrater · manger · pas d\'alarme.',
+
+    blocks: [
+      { id: 'matin',    label: 'MATIN',           anchor: null,    desc: 'Réveil naturel · hygiène · petit-déjeuner complet · méditation courte' },
+      { id: 'journee',  label: 'JOURNÉE',         anchor: null,    desc: 'Marche 20–30 min · repos · sieste si besoin' },
+      { id: 'leger',    label: 'TÂCHES LÉGÈRES',  anchor: null,    desc: 'Lecture passive ou 1 tâche simple uniquement — pas d\'étude intensive' },
+      { id: 'fin',      label: 'SOIR',            anchor: '21:00', desc: 'Repas · hygiène · wind down · sommeil 21:00' },
+    ],
+
+    interdictionsShort: 'Deep work · culpabilité',
+    validationShort: 'Sommeil + marche + alimentation',
 
     planning: [
       { time: 'Matin', action: 'Réveil naturel — aucune alarme', type: 'anchor' },
@@ -386,6 +447,18 @@ const MODES = {
     objective: 'Être présent. Faire ce qui ressource réellement. Maintenir le noyau biologique minimal.',
     when: 'Jour de repos délibéré, week-end libre, jour férié. Décidé consciemment, pas subi.',
 
+    immediateAction: 'Calme + respiration — pas d\'alarme, pas d\'écran dans les 10 premières minutes.',
+
+    blocks: [
+      { id: 'matin',    label: 'MATIN',           anchor: null,    desc: 'Hygiène · petit-déjeuner lent · méditation même courte' },
+      { id: 'journee',  label: 'JOURNÉE',         anchor: null,    desc: 'Activité libre réelle choisie · mouvement physique agréable' },
+      { id: 'social',   label: 'SOCIAL',          anchor: null,    desc: 'Interaction si désirée — famille, amis, sortie' },
+      { id: 'fin',      label: 'SOIR',            anchor: '21:30', desc: 'Repas · hygiène · sommeil ancré 21:30' },
+    ],
+
+    interdictionsShort: 'Binge numérique · dérive',
+    validationShort: 'Récupération réelle + sommeil maintenu',
+
     planning: [
       { time: 'Matin', action: 'Réveil naturel ou légèrement plus tard', type: 'anchor' },
       { time: 'Matin', action: 'Méditation (même 5–10 min)', type: 'core' },
@@ -454,6 +527,18 @@ const MODES = {
     intent: 'Reprendre le système après une interruption. Pas de rattrapage — réinitialisation propre.',
     objective: 'Réenclencher les automatismes. Méditer. Faire 1 bloc d\'étude. Ne pas essayer de rattraper.',
     when: 'Après 48h+ de chaos, disruption, voyage, maladie, ou dérive. Retour au système.',
+
+    immediateAction: 'Réveil 05:30 — reset environnement physique. Bureau. Téléphone hors de portée.',
+
+    blocks: [
+      { id: 'matin',    label: 'MATIN',           anchor: '05:30', desc: 'Routine + 1 bloc unique d\'étude — méditation en premier, pas d\'excuses' },
+      { id: 'journee',  label: 'JOURNÉE',         anchor: null,    desc: 'Tâches normales sans surcharge — pas de rattrapage' },
+      { id: 'fin',      label: 'FIN DE JOURNÉE',  anchor: null,    desc: 'Sport léger · hygiène · repas' },
+      { id: 'soir',     label: 'SOIR',            anchor: '21:30', desc: 'Récitation optionnelle · sommeil ancré 21:30' },
+    ],
+
+    interdictionsShort: 'Rattrapage · surcharge',
+    validationShort: 'Bloc 1 + ancre sommeil',
 
     planning: [
       { time: '05:30', action: 'Réveil — remettre l\'ancre temporelle', type: 'anchor' },

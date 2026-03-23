@@ -452,35 +452,100 @@
   }
 
   // ============================================================
-  // RENDER MODE SCREEN
+  // RENDER MODE SCREEN — compressed block logic
   // ============================================================
   function renderModeScreen(mode) {
     // HEADER
     setText('mode-name', mode.name);
-    setText('mode-badge', mode.id.toUpperCase());
-    setText('mode-energy', 'ÉNERGIE : ' + mode.energyLevel);
-    setText('mode-intent', mode.intent);
-    setText('mode-when', 'Contexte : ' + mode.when);
+    setText('mode-energy', mode.energyLevel);
 
     const modeHeader = el('mode-header');
-    if (modeHeader) {
-      modeHeader.style.borderBottomColor = mode.color;
+    if (modeHeader) modeHeader.style.borderBottomColor = mode.color;
+
+    // ACTION IMMÉDIATE
+    setText('immediate-action-text', mode.immediateAction || mode.objective);
+
+    // ACTION BLOCKS — compressed, 3–5 max
+    renderActionBlocks(mode);
+
+    // INTERDICTIONS + VALIDATION — always visible
+    setText('interdictions-inline', mode.interdictionsShort || mode.interdictions.join(' · '));
+    setText('validation-inline', mode.validationShort || mode.validation);
+
+    // DETAIL PANEL (hidden by default)
+    renderDetailPanel(mode);
+
+    // RESET timer
+    updateTimerDisplay();
+
+    // Detail toggle button
+    setupDetailToggle();
+  }
+
+  // ============================================================
+  // RENDER ACTION BLOCKS — compressed 3–5 blocks
+  // ============================================================
+  function renderActionBlocks(mode) {
+    const container = el('action-blocks');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const blocks = mode.blocks || [];
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    // Determine which block is active based on anchor times
+    let activeIndex = -1;
+    blocks.forEach(function (block, i) {
+      if (!block.anchor) return;
+      const anchorMin = parseBlockStartMinutes(block.anchor);
+      if (anchorMin === null) return;
+      const nextAnchorMin = (function () {
+        for (let j = i + 1; j < blocks.length; j++) {
+          if (blocks[j].anchor) return parseBlockStartMinutes(blocks[j].anchor);
+        }
+        return 24 * 60; // end of day
+      })();
+      if (currentMinutes >= anchorMin && currentMinutes < nextAnchorMin) {
+        activeIndex = i;
+      }
+    });
+
+    // If no anchor-based match, find first block without anchor as default active
+    if (activeIndex === -1) {
+      // Heuristic: pick the first block that isn't clearly in the future
+      activeIndex = 0;
     }
 
-    // OBJECTIVE
-    setText('mode-objective', mode.objective);
+    blocks.forEach(function (block, i) {
+      const div = document.createElement('div');
+      div.className = 'action-block';
+      if (i === activeIndex) div.classList.add('action-block--active');
+      if (i < activeIndex) div.classList.add('action-block--past');
 
-    // CRITICAL RULES
-    const criticalList = el('critical-list');
-    if (criticalList) {
-      criticalList.innerHTML = '';
-      mode.criticalRules.forEach(function (rule) {
-        const li = document.createElement('li');
-        li.textContent = rule;
-        criticalList.appendChild(li);
-      });
-    }
+      const anchorHtml = block.anchor
+        ? '<span class="action-block-anchor">' + escapeHtml(block.anchor) + '</span>'
+        : '';
+      const nowBadge = (i === activeIndex)
+        ? '<span class="action-block-now">EN COURS</span>'
+        : '';
 
+      div.innerHTML =
+        '<div class="action-block-header">' +
+          '<span class="action-block-label">' + escapeHtml(block.label) + '</span>' +
+          anchorHtml +
+          nowBadge +
+        '</div>' +
+        '<div class="action-block-desc">' + escapeHtml(block.desc) + '</div>';
+
+      container.appendChild(div);
+    });
+  }
+
+  // ============================================================
+  // RENDER DETAIL PANEL (hidden by default)
+  // ============================================================
+  function renderDetailPanel(mode) {
     // PLANNING
     renderPlanning(mode);
 
@@ -495,38 +560,47 @@
       });
     }
 
-    // INTERDICTIONS
-    const interdictionsList = el('interdictions-list');
-    if (interdictionsList) {
-      interdictionsList.innerHTML = '';
-      mode.interdictions.forEach(function (item) {
+    // CRITICAL RULES
+    const criticalList = el('critical-list');
+    if (criticalList) {
+      criticalList.innerHTML = '';
+      mode.criticalRules.forEach(function (rule) {
         const li = document.createElement('li');
-        li.className = 'interdiction-item';
-        li.textContent = item;
-        interdictionsList.appendChild(li);
+        li.textContent = rule;
+        criticalList.appendChild(li);
       });
     }
 
-    // START CHECKLIST
+    // CHECKLISTS
     renderChecklist('start-checklist', mode.startChecklist, mode.id, 'start');
-
-    // END CHECKLIST
     renderChecklist('end-checklist', mode.endChecklist, mode.id, 'end');
 
     // BEHAVIORAL LAYER
-    setText('beh-when', mode.when);
     setText('beh-error', mode.classicError);
-    setText('beh-validation', mode.validation);
     setText('beh-exit', mode.exitSignal);
 
-    // NEXT MODE SUGGESTIONS
+    // NEXT MODES
     renderNextModes(mode);
-
-    // TRANSITION NOTE
     setText('transition-note', mode.transitionNote);
+  }
 
-    // RESET timer preset display
-    updateTimerDisplay();
+  // ============================================================
+  // DETAIL TOGGLE
+  // ============================================================
+  function setupDetailToggle() {
+    const btn = el('btn-detail-toggle');
+    const panel = el('mode-details-panel');
+    if (!btn || !panel) return;
+
+    // Reset state
+    panel.style.display = 'none';
+    btn.textContent = 'DÉTAILS ▾';
+
+    btn.onclick = function () {
+      const isVisible = panel.style.display !== 'none';
+      panel.style.display = isVisible ? 'none' : 'block';
+      btn.textContent = isVisible ? 'DÉTAILS ▾' : 'MASQUER ▴';
+    };
   }
 
   // ============================================================
@@ -820,18 +894,10 @@
     const changeModeBtn = el('btn-change-mode');
     if (changeModeBtn) changeModeBtn.addEventListener('click', goHome);
 
-    // Execute button
+    // Execute button — plein écran action immédiate
     const executeBtn = el('btn-execute');
     if (executeBtn) {
-      executeBtn.addEventListener('click', function () {
-        document.body.classList.add('focus-mode');
-        announce('Exécution du mode ' + (State.activeMode ? MODES[State.activeMode].name : '') + ' confirmée.');
-
-        // Start timer if not running
-        if (!State.timer.running) {
-          startTimer();
-        }
-      });
+      executeBtn.addEventListener('click', openExecuteOverlay);
     }
 
     // Mode done → recovery
@@ -894,6 +960,58 @@
     if (fsBtnStart) fsBtnStart.addEventListener('click', toggleTimer);
     if (fsBtnReset) fsBtnReset.addEventListener('click', resetTimer);
     if (fsBtnClose) fsBtnClose.addEventListener('click', closeTimerFullscreen);
+  }
+
+  // ============================================================
+  // EXECUTE OVERLAY — plein écran action immédiate
+  // ============================================================
+  function openExecuteOverlay() {
+    const mode = State.activeMode ? MODES[State.activeMode] : null;
+    if (!mode) return;
+
+    // Remove existing if any
+    const existing = el('execute-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'execute-overlay';
+    overlay.className = 'execute-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+
+    overlay.innerHTML =
+      '<div class="execute-overlay-content">' +
+        '<div class="execute-overlay-mode" style="color:' + mode.color + '">' + escapeHtml(mode.name) + '</div>' +
+        '<div class="execute-overlay-action">' + escapeHtml(mode.immediateAction || mode.objective) + '</div>' +
+        '<div class="execute-overlay-validation">✓ ' + escapeHtml(mode.validationShort || mode.validation) + '</div>' +
+        '<div class="execute-overlay-controls">' +
+          '<button class="btn-primary execute-overlay-start" id="execute-overlay-start">DÉMARRER TIMER</button>' +
+          '<button class="btn-ghost execute-overlay-close" id="execute-overlay-close">FERMER [Échap]</button>' +
+        '</div>' +
+      '</div>';
+
+    document.body.appendChild(overlay);
+    document.body.classList.add('focus-mode');
+
+    el('execute-overlay-start').addEventListener('click', function () {
+      if (!State.timer.running) startTimer();
+      overlay.remove();
+      document.body.classList.remove('focus-mode');
+    });
+
+    el('execute-overlay-close').addEventListener('click', function () {
+      overlay.remove();
+      document.body.classList.remove('focus-mode');
+    });
+
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) {
+        overlay.remove();
+        document.body.classList.remove('focus-mode');
+      }
+    });
+
+    announce('Exécution — ' + mode.name + ' — ' + (mode.immediateAction || mode.objective));
   }
 
   // ============================================================
@@ -1460,7 +1578,14 @@
 
         case 'Escape':
           e.preventDefault();
-          // Close modals first
+          // Close execute overlay first
+          const execOverlay = el('execute-overlay');
+          if (execOverlay) {
+            execOverlay.remove();
+            document.body.classList.remove('focus-mode');
+            break;
+          }
+          // Close modals
           const openModals = qsAll('.modal-overlay').filter(function (m) {
             return m.style.display !== 'none';
           });

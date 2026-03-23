@@ -1755,6 +1755,338 @@ kbd {
   .system-quote {
     display: none;
   }
+
+  .action-blocks {
+    grid-template-columns: 1fr;
+  }
+
+  .mode-bottom-bar {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .execute-bar {
+    padding: var(--space-sm);
+  }
+
+  .btn-execute-main {
+    font-size: 1rem;
+    padding: 14px 20px;
+  }
+
+  .execute-sub-actions {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .timer-widget {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ============================================================
+   ACTION IMMÉDIATE BLOCK
+   ============================================================ */
+.immediate-action-block {
+  margin: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-left: 4px solid var(--mode-current);
+  background: rgba(255,255,255,0.03);
+}
+
+.ia-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--mode-current);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.ia-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+/* ============================================================
+   ACTION BLOCKS — compressed 3–5 blocks
+   ============================================================ */
+.action-blocks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-sm);
+  margin: 0 var(--space-md) var(--space-md);
+}
+
+.action-block {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.action-block--active {
+  border-left-color: var(--mode-current) !important;
+  background: rgba(255,255,255,0.04);
+}
+
+.action-block--past {
+  opacity: 0.38;
+}
+
+.action-block-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: 5px;
+}
+
+.action-block-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.action-block--active .action-block-label {
+  color: var(--mode-current);
+}
+
+.action-block-anchor {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.action-block--active .action-block-anchor {
+  color: var(--mode-current);
+}
+
+.action-block-now {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--mode-current);
+  border: 1px solid var(--mode-current);
+  padding: 1px 5px;
+  border-radius: var(--radius);
+  white-space: nowrap;
+}
+
+.action-block-desc {
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  line-height: 1.45;
+}
+
+.action-block--past .action-block-desc {
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   BOTTOM BAR — interdictions + validation toujours visibles
+   ============================================================ */
+.mode-bottom-bar {
+  display: flex;
+  gap: var(--space-lg);
+  margin: 0 var(--space-md) var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.bottom-bar-col {
+  flex: 1;
+}
+
+.bottom-bar-col .block-label {
+  font-size: 0.62rem;
+  margin-bottom: 3px;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.interdictions-inline {
+  font-size: 0.78rem;
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.validation-inline {
+  font-size: 0.78rem;
+  color: var(--success);
+  font-weight: 600;
+}
+
+/* ============================================================
+   EXECUTE BAR
+   ============================================================ */
+.execute-bar {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  align-items: stretch;
+}
+
+.btn-execute-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px 24px;
+  background: var(--mode-current);
+  color: #000;
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: opacity var(--transition);
+}
+
+.btn-execute-main:hover {
+  opacity: 0.88;
+}
+
+.execute-sub-actions {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ============================================================
+   MODE HEADER — new minimal layout
+   ============================================================ */
+.mode-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 2px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 100;
+  gap: var(--space-md);
+}
+
+.mode-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.mode-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* ============================================================
+   TIMER WIDGET — compact row
+   ============================================================ */
+.timer-widget {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky;
+  bottom: 0;
+}
+
+/* ============================================================
+   DETAIL PANEL
+   ============================================================ */
+.mode-details-panel {
+  margin: var(--space-md);
+  padding: var(--space-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.detail-section {
+  margin-bottom: var(--space-lg);
+}
+
+.detail-section:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================================
+   EXECUTE OVERLAY — plein écran action immédiate
+   ============================================================ */
+.execute-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+}
+
+.execute-overlay-content {
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+}
+
+.execute-overlay-mode {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-lg);
+}
+
+.execute-overlay-action {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+  margin-bottom: var(--space-xl);
+}
+
+@media (max-width: 480px) {
+  .execute-overlay-action {
+    font-size: 1.15rem;
+  }
+}
+
+.execute-overlay-validation {
+  font-size: 0.82rem;
+  color: var(--success);
+  margin-bottom: var(--space-xl);
+  letter-spacing: 0.05em;
+}
+
+.execute-overlay-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  align-items: center;
+}
+
+.execute-overlay-start {
+  min-width: 220px;
+  padding: 14px 32px;
+  font-size: 1rem;
 }
 
 /* ============================================================

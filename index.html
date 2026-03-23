@@ -90,165 +90,123 @@
   ======================================================== -->
   <div id="screen-mode" class="screen" style="display:none;" aria-live="polite">
 
-    <!-- MODE HEADER -->
+    <!-- MODE HEADER — minimal -->
     <div class="mode-header" id="mode-header">
       <div class="mode-header-left">
-        <button class="btn-ghost btn-back" id="btn-back" aria-label="Retour à l'accueil">← RETOUR</button>
-        <div class="mode-header-info">
-          <h2 class="mode-name" id="mode-name">—</h2>
-          <div class="mode-meta">
-            <span class="mode-badge" id="mode-badge">—</span>
-            <span class="mode-energy" id="mode-energy">—</span>
-          </div>
-        </div>
+        <button class="btn-ghost btn-back" id="btn-back" aria-label="Retour">← RETOUR</button>
+        <h2 class="mode-name" id="mode-name">—</h2>
+        <span class="mode-energy" id="mode-energy">—</span>
       </div>
       <div class="mode-header-right">
-        <div class="mode-intent" id="mode-intent">—</div>
-        <div class="mode-when" id="mode-when">—</div>
+        <button class="btn-ghost btn-small" id="btn-detail-toggle" title="Détails">DÉTAILS ▾</button>
       </div>
     </div>
 
-    <!-- MODE OBJECTIVE -->
-    <div class="mode-objective-block" id="mode-objective-block">
-      <div class="block-label">OBJECTIF DU JOUR</div>
-      <div class="mode-objective" id="mode-objective">—</div>
+    <!-- ACTION IMMÉDIATE — dominant, premier regard -->
+    <div class="immediate-action-block" id="immediate-action-block">
+      <div class="ia-label">ACTION IMMÉDIATE</div>
+      <div class="ia-text" id="immediate-action-text">—</div>
     </div>
 
-    <!-- CRITICAL RULES -->
-    <div class="critical-rules" id="critical-rules">
-      <div class="block-label critical-label">CRITIQUE — RÈGLES NON-NÉGOCIABLES</div>
-      <ul class="critical-list" id="critical-list">
-        <!-- Rendered by JS -->
-      </ul>
+    <!-- BLOCS D'ACTION COMPRESSÉS — 3 à 5 max, visibles tout de suite -->
+    <div class="action-blocks" id="action-blocks">
+      <!-- Rendered by JS -->
     </div>
 
-    <!-- MODE BODY (two-column) -->
-    <div class="mode-body" id="mode-body">
+    <!-- INTERDICTIONS + VALIDATION — toujours visibles, jamais cachés -->
+    <div class="mode-bottom-bar">
+      <div class="bottom-bar-col">
+        <div class="block-label">INTERDIT</div>
+        <div class="interdictions-inline" id="interdictions-inline">—</div>
+      </div>
+      <div class="bottom-bar-col">
+        <div class="block-label">VALIDE SI</div>
+        <div class="validation-inline" id="validation-inline">—</div>
+      </div>
+    </div>
 
-      <!-- MAIN COLUMN -->
-      <div class="mode-main-col">
-
-        <!-- PLANNING BLOCK -->
-        <section class="mode-section planning-block" id="planning-block">
-          <div class="block-label">PLANNING HORAIRE</div>
-          <div class="time-blocks" id="time-blocks">
-            <!-- Rendered by JS -->
-          </div>
-        </section>
-
-        <!-- INTERDICTIONS BLOCK -->
-        <section class="mode-section interdictions-block" id="interdictions-block">
-          <div class="block-label">INTERDICTIONS</div>
-          <ul class="interdictions-list" id="interdictions-list">
-            <!-- Rendered by JS -->
-          </ul>
-        </section>
-
-        <!-- BEHAVIORAL LAYER -->
-        <section class="mode-section behavioral-layer" id="behavioral-layer">
-          <div class="block-label">COUCHE COMPORTEMENTALE</div>
-          <div class="behavioral-grid" id="behavioral-grid">
-            <div class="behavioral-item">
-              <div class="behavioral-item-label">QUAND CE MODE S'ACTIVE</div>
-              <div class="behavioral-item-value" id="beh-when">—</div>
-            </div>
-            <div class="behavioral-item">
-              <div class="behavioral-item-label">ERREUR CLASSIQUE</div>
-              <div class="behavioral-item-value error-item" id="beh-error">—</div>
-            </div>
-            <div class="behavioral-item">
-              <div class="behavioral-item-label">CE QUI VALIDE LA JOURNÉE</div>
-              <div class="behavioral-item-value" id="beh-validation">—</div>
-            </div>
-            <div class="behavioral-item">
-              <div class="behavioral-item-label">SIGNAL DE SORTIE</div>
-              <div class="behavioral-item-value" id="beh-exit">—</div>
-            </div>
-          </div>
-        </section>
-
-      </div><!-- /.mode-main-col -->
-
-      <!-- SIDEBAR COLUMN -->
-      <div class="mode-sidebar-col">
-
-        <!-- CORE BLOCK -->
-        <section class="mode-section core-block" id="core-block">
-          <div class="block-label">NOYAU NON-NÉGOCIABLE</div>
-          <ul class="core-list" id="core-list">
-            <!-- Rendered by JS -->
-          </ul>
-        </section>
-
-        <!-- START CHECKLIST -->
-        <section class="mode-section checklist-section" id="start-checklist-section">
-          <div class="block-label">CHECKLIST DÉMARRAGE</div>
-          <ul class="checklist-list" id="start-checklist" data-list-type="start">
-            <!-- Rendered by JS -->
-          </ul>
-          <button class="btn-ghost btn-small check-all-btn" data-target="start">TOUT COCHER</button>
-        </section>
-
-        <!-- END CHECKLIST -->
-        <section class="mode-section checklist-section" id="end-checklist-section">
-          <div class="block-label">CHECKLIST FIN DE JOURNÉE</div>
-          <ul class="checklist-list" id="end-checklist" data-list-type="end">
-            <!-- Rendered by JS -->
-          </ul>
-          <button class="btn-ghost btn-small check-all-btn" data-target="end">TOUT COCHER</button>
-        </section>
-
-        <!-- NEXT MODE SUGGESTION -->
-        <section class="mode-section next-mode-suggestion" id="next-mode-suggestion">
-          <div class="block-label">MODE SUIVANT SUGGÉRÉ</div>
-          <div class="next-modes" id="next-modes">
-            <!-- Rendered by JS -->
-          </div>
-          <div class="transition-note" id="transition-note">—</div>
-        </section>
-
-        <!-- TIMER WIDGET -->
-        <section class="mode-section timer-widget" id="timer-widget">
-          <div class="block-label">TIMER</div>
-          <div class="timer-display" id="timer-display" aria-live="polite" aria-atomic="true">20:00</div>
-          <div class="timer-presets">
-            <button class="btn-ghost btn-small timer-preset" data-minutes="15">15 min</button>
-            <button class="btn-ghost btn-small timer-preset active" data-minutes="20">20 min</button>
-            <button class="btn-ghost btn-small timer-preset" data-minutes="60">60 min</button>
-            <button class="btn-ghost btn-small timer-preset" data-minutes="90">90 min</button>
-          </div>
-          <div class="timer-controls">
-            <button class="btn-primary btn-small" id="btn-timer-start">DÉMARRER</button>
-            <button class="btn-secondary btn-small" id="btn-timer-reset">RESET</button>
-            <button class="btn-ghost btn-small" id="btn-timer-fullscreen" title="Plein écran timer [F]">⤢</button>
-          </div>
-          <div class="timer-progress-bar">
-            <div class="timer-progress-fill" id="timer-progress-fill" style="width:100%"></div>
-          </div>
-        </section>
-
-      </div><!-- /.mode-sidebar-col -->
-    </div><!-- /.mode-body -->
-
-    <!-- MODE ACTIONS -->
-    <div class="mode-actions" id="mode-actions">
-      <button class="btn-secondary" id="btn-back-2">RETOUR</button>
-      <button class="btn-secondary" id="btn-change-mode">CHANGER DE MODE</button>
-      <button class="btn-primary" id="btn-execute">J'EXÉCUTE</button>
-      <button class="btn-secondary" id="btn-copy-protocol" title="Copier le protocole">COPIER PROTOCOLE</button>
-      <button class="btn-secondary" id="btn-print">IMPRIMER</button>
-      <button class="btn-danger" id="btn-mode-done">MODE TERMINÉ / RÉCUPÉRATION</button>
+    <!-- BOUTON EXÉCUTION PLEIN ÉCRAN -->
+    <div class="execute-bar">
+      <button class="btn-execute-main" id="btn-execute">▶ J'EXÉCUTE MAINTENANT</button>
+      <div class="execute-sub-actions">
+        <button class="btn-ghost btn-small" id="btn-back-2">RETOUR</button>
+        <button class="btn-ghost btn-small" id="btn-change-mode">CHANGER</button>
+        <button class="btn-ghost btn-small" id="btn-copy-protocol">COPIER</button>
+        <button class="btn-ghost btn-small" id="btn-print">IMPRIMER</button>
+        <button class="btn-danger btn-small" id="btn-mode-done">TERMINER</button>
+      </div>
     </div>
 
     <!-- COPY CONFIRMATION -->
-    <div class="copy-confirmation" id="copy-confirmation" aria-live="polite" style="display:none;">
-      Copié !
+    <div class="copy-confirmation" id="copy-confirmation" aria-live="polite" style="display:none;">Copié !</div>
+
+    <!-- TIMER WIDGET — compact, toujours accessible -->
+    <div class="timer-widget" id="timer-widget">
+      <div class="timer-display" id="timer-display" aria-live="polite" aria-atomic="true">20:00</div>
+      <div class="timer-presets">
+        <button class="btn-ghost btn-small timer-preset" data-minutes="15">15</button>
+        <button class="btn-ghost btn-small timer-preset active" data-minutes="20">20</button>
+        <button class="btn-ghost btn-small timer-preset" data-minutes="60">60</button>
+        <button class="btn-ghost btn-small timer-preset" data-minutes="90">90</button>
+      </div>
+      <div class="timer-controls">
+        <button class="btn-primary btn-small" id="btn-timer-start">START</button>
+        <button class="btn-secondary btn-small" id="btn-timer-reset">RESET</button>
+        <button class="btn-ghost btn-small" id="btn-timer-fullscreen">⤢</button>
+      </div>
+      <div class="timer-progress-bar">
+        <div class="timer-progress-fill" id="timer-progress-fill" style="width:100%"></div>
+      </div>
     </div>
 
-    <!-- MODE SCREEN FOOTER -->
+    <!-- DÉTAILS CACHÉS — visible uniquement si demandé -->
+    <div class="mode-details-panel" id="mode-details-panel" style="display:none;">
+      <div class="detail-section">
+        <div class="block-label">PLANNING DÉTAILLÉ</div>
+        <div class="time-blocks" id="time-blocks"></div>
+      </div>
+      <div class="detail-section">
+        <div class="block-label">NOYAU NON-NÉGOCIABLE</div>
+        <ul class="core-list" id="core-list"></ul>
+      </div>
+      <div class="detail-section">
+        <div class="block-label">RÈGLES CRITIQUES</div>
+        <ul class="critical-list" id="critical-list"></ul>
+      </div>
+      <div class="detail-section">
+        <div class="block-label">CHECKLIST DÉMARRAGE</div>
+        <ul class="checklist-list" id="start-checklist" data-list-type="start"></ul>
+        <button class="btn-ghost btn-small check-all-btn" data-target="start">TOUT COCHER</button>
+      </div>
+      <div class="detail-section">
+        <div class="block-label">CHECKLIST FIN DE JOURNÉE</div>
+        <ul class="checklist-list" id="end-checklist" data-list-type="end"></ul>
+        <button class="btn-ghost btn-small check-all-btn" data-target="end">TOUT COCHER</button>
+      </div>
+      <div class="detail-section">
+        <div class="block-label">MODE SUIVANT</div>
+        <div class="next-modes" id="next-modes"></div>
+        <div class="transition-note" id="transition-note">—</div>
+      </div>
+      <div class="detail-section behavioral-layer">
+        <div class="block-label">COUCHE COMPORTEMENTALE</div>
+        <div class="behavioral-grid" id="behavioral-grid">
+          <div class="behavioral-item">
+            <div class="behavioral-item-label">ERREUR CLASSIQUE</div>
+            <div class="behavioral-item-value error-item" id="beh-error">—</div>
+          </div>
+          <div class="behavioral-item">
+            <div class="behavioral-item-label">SIGNAL DE SORTIE</div>
+            <div class="behavioral-item-value" id="beh-exit">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
     <footer class="mode-footer">
       <div class="shortcuts-hint">
-        <kbd>Échap</kbd> retour · <kbd>T</kbd> timer · <kbd>F</kbd> timer plein écran · <kbd>R</kbd> reset · <kbd>U</kbd> urgence · <kbd>?</kbd> aide
+        <kbd>Échap</kbd> retour · <kbd>T</kbd> timer · <kbd>F</kbd> plein écran · <kbd>R</kbd> reset · <kbd>U</kbd> urgence · <kbd>?</kbd> aide
       </div>
     </footer>
 

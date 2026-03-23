@@ -532,6 +532,70 @@
   // ============================================================
   // RENDER PLANNING
   // ============================================================
+
+  // Parse "HH:MM" or "HH:MM–HH:MM" → returns start time as total minutes
+  function parseBlockStartMinutes(timeStr) {
+    if (!timeStr) return null;
+    // Take only the start time (before "–" if range)
+    const start = timeStr.split('–')[0].trim().replace('h', ':');
+    const parts = start.split(':');
+    if (parts.length < 2) return null;
+    const h = parseInt(parts[0], 10);
+    const m = parseInt(parts[1], 10);
+    if (isNaN(h) || isNaN(m)) return null;
+    return h * 60 + m;
+  }
+
+  function highlightCurrentPlanningBlock() {
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const blocks = qsAll('.time-block');
+    if (!blocks.length) return;
+
+    // Build array of start times
+    const startTimes = blocks.map(function (b) {
+      return parseBlockStartMinutes(b.querySelector('.time-block-time').textContent);
+    });
+
+    let activeIndex = -1;
+    for (let i = 0; i < startTimes.length; i++) {
+      const t = startTimes[i];
+      if (t === null) continue;
+      const next = startTimes.slice(i + 1).find(function (v) { return v !== null; });
+      const end = (next !== undefined) ? next : t + 90;
+      if (currentMinutes >= t && currentMinutes < end) {
+        activeIndex = i;
+        break;
+      }
+    }
+
+    // If no active found but all times are past, mark last as past
+    blocks.forEach(function (b, i) {
+      b.classList.remove('time-block--active', 'time-block--past', 'time-block--next');
+      const t = startTimes[i];
+      if (t === null) return;
+
+      if (i === activeIndex) {
+        b.classList.add('time-block--active');
+      } else if (activeIndex === -1) {
+        // Nothing active yet — mark past items
+        const allFuture = startTimes.every(function (v) { return v === null || v > currentMinutes; });
+        if (!allFuture && t < currentMinutes) {
+          b.classList.add('time-block--past');
+        } else if (b === blocks[0] || (t !== null && t > currentMinutes)) {
+          // first upcoming = next
+          if (!blocks.some(function (bb) { return bb.classList.contains('time-block--next'); })) {
+            b.classList.add('time-block--next');
+          }
+        }
+      } else if (t < startTimes[activeIndex]) {
+        b.classList.add('time-block--past');
+      } else if (i === activeIndex + 1) {
+        b.classList.add('time-block--next');
+      }
+    });
+  }
+
   function renderPlanning(mode) {
     const container = el('time-blocks');
     if (!container) return;
@@ -546,10 +610,16 @@
       block.innerHTML = [
         '<span class="time-block-time">' + escapeHtml(item.time) + '</span>',
         '<span class="time-block-action">' + escapeHtml(item.action) + '</span>',
+        '<span class="time-block-now-label">EN COURS</span>',
       ].join('');
 
       container.appendChild(block);
     });
+
+    // Highlight immediately then every 60s
+    highlightCurrentPlanningBlock();
+    if (State._planningInterval) clearInterval(State._planningInterval);
+    State._planningInterval = setInterval(highlightCurrentPlanningBlock, 60000);
   }
 
   // ============================================================

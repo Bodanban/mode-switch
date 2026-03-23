@@ -762,6 +762,70 @@ kbd {
 }
 
 /* ============================================================
+   TIME BLOCK — CURRENT HOUR HIGHLIGHTING
+   ============================================================ */
+
+/* Bloc actif : en cours maintenant */
+.time-block--active {
+  background: rgba(240, 240, 240, 0.06) !important;
+  border-left-color: var(--mode-current) !important;
+  border-left-width: 3px;
+  padding-left: calc(var(--space-md) - 1px); /* compensate extra px */
+  position: relative;
+}
+
+.time-block--active .time-block-time {
+  color: var(--mode-current) !important;
+  font-weight: 700;
+}
+
+.time-block--active .time-block-action {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* Badge "EN COURS" — affiché uniquement sur le bloc actif */
+.time-block-now-label {
+  display: none;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--mode-current);
+  border: 1px solid var(--mode-current);
+  padding: 1px 5px;
+  border-radius: var(--radius);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.time-block--active .time-block-now-label {
+  display: inline-flex;
+}
+
+/* Bloc suivant */
+.time-block--next {
+  opacity: 1;
+}
+
+.time-block--next .time-block-time {
+  color: var(--text-secondary) !important;
+}
+
+.time-block--next .time-block-action {
+  color: var(--text-secondary);
+}
+
+/* Blocs passés : atténués */
+.time-block--past {
+  opacity: 0.35;
+}
+
+.time-block--past .time-block-time {
+  text-decoration: line-through;
+  color: var(--text-muted) !important;
+}
+
+/* ============================================================
    CORE BLOCK
    ============================================================ */
 .core-list {

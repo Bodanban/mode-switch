@@ -1,9 +1,19 @@
 // ============================================================
 // MODES.JS — Data file for Mode Switch dashboard
 // All data as plain globals (no ES modules)
+// Required fields per mode:
+//   id, name, shortName, color, colorVar, energyLevel, intent,
+//   objective, when, immediateAction, blocks[], interdictionsShort,
+//   validationShort, planning[], core[], criticalRules[],
+//   interdictions[], classicError, validation, exitSignal,
+//   startChecklist[], endChecklist[], nextModes[], transitionNote
 // ============================================================
 
 const MODES = {
+
+  // ----------------------------------------------------------
+  // MODE NORMAL
+  // ----------------------------------------------------------
   normal: {
     id: 'normal',
     name: 'MODE NORMAL',
@@ -18,27 +28,27 @@ const MODES = {
     immediateAction: 'Réveil 05:30 — debout, 50 pompes, douche, méditation. Pas d\'écran.',
 
     blocks: [
-      { id: 'matin',    label: 'MATIN',          anchor: '05:30', desc: 'Routine complète — physique · hygiène · méditation · petit-déjeuner · bloc 1 médecine' },
-      { id: 'journee',  label: 'JOURNÉE',         anchor: null,    desc: 'Vie réelle + obligations — bloc 2 médecine intégré dans les plages libres' },
-      { id: 'fin',      label: 'FIN DE JOURNÉE',  anchor: null,    desc: 'Sport · hygiène · repas du soir' },
-      { id: 'soir',     label: 'SOIR',            anchor: '21:30', desc: 'Récitation · wind down · sommeil 21:30' },
+      { id: 'matin',   label: 'MATIN',         anchor: '05:30', desc: 'Routine complète — physique · hygiène · méditation · petit-déjeuner · bloc 1 médecine' },
+      { id: 'journee', label: 'JOURNÉE',        anchor: null,    desc: 'Vie réelle + obligations — bloc 2 médecine intégré dans les plages libres' },
+      { id: 'fin',     label: 'FIN DE JOURNÉE', anchor: null,    desc: 'Sport · hygiène · repas du soir' },
+      { id: 'soir',    label: 'SOIR',           anchor: '21:30', desc: 'Récitation · wind down · sommeil 21:30' },
     ],
 
     interdictionsShort: 'Scroll · multitâche · contenu long',
     validationShort: 'Bloc 1 + sport + sommeil',
 
     planning: [
-      { time: '05:30', action: 'Réveil', type: 'anchor' },
-      { time: '05:30–05:45', action: '50 pompes + 50 abdos', type: 'physical' },
-      { time: '05:45–06:06', action: 'Méditation (21 min)', type: 'core' },
-      { time: '06:10–07:00', action: 'Deep work — bloc 1 (médecine)', type: 'deep' },
-      { time: '07:00–07:15', action: 'Extraction contenu médical (15 min MAX)', type: 'content' },
-      { time: '07:15–08:00', action: 'Petit-déjeuner + transition', type: 'anchor' },
-      { time: '14:30–16:00', action: 'Deep work — bloc 2 (médecine)', type: 'deep' },
-      { time: '16:15–17:15', action: 'Sport', type: 'physical' },
-      { time: '18:00–18:20', action: 'Récitation cas cliniques', type: 'core' },
-      { time: '20:30', action: 'Début wind-down', type: 'anchor' },
-      { time: '21:30', action: 'Sommeil', type: 'anchor' },
+      { time: '05:30',       action: 'Réveil',                                        type: 'anchor'   },
+      { time: '05:30–05:45', action: '50 pompes + 50 abdos',                         type: 'physical' },
+      { time: '05:45–06:06', action: 'Méditation (21 min)',                           type: 'core'     },
+      { time: '06:10–07:00', action: 'Deep work — bloc 1 (médecine)',                type: 'deep'     },
+      { time: '07:00–07:15', action: 'Extraction contenu médical (15 min MAX)',       type: 'content'  },
+      { time: '07:15–08:00', action: 'Petit-déjeuner + transition',                  type: 'anchor'   },
+      { time: '14:30–16:00', action: 'Deep work — bloc 2 (médecine)',                type: 'deep'     },
+      { time: '16:15–17:15', action: 'Sport',                                         type: 'physical' },
+      { time: '18:00–18:20', action: 'Récitation cas cliniques',                      type: 'core'     },
+      { time: '20:30',       action: 'Début wind-down',                               type: 'anchor'   },
+      { time: '21:30',       action: 'Sommeil',                                       type: 'anchor'   },
     ],
 
     core: [
@@ -92,6 +102,9 @@ const MODES = {
     transitionNote: 'Si garde demain → passe en mode PRÉ-GARDE dès aujourd\'hui après-midi.',
   },
 
+  // ----------------------------------------------------------
+  // MODE STAGE
+  // ----------------------------------------------------------
   stage: {
     id: 'stage',
     name: 'MODE STAGE',
@@ -106,27 +119,27 @@ const MODES = {
     immediateAction: 'Réveil 05:30 — routine matin · révision rapide · départ stage à l\'heure.',
 
     blocks: [
-      { id: 'matin',    label: 'MATIN',          anchor: '05:30', desc: 'Routine + bloc court révision — physique · hygiène · méditation · départ' },
-      { id: 'journee',  label: 'JOURNÉE',         anchor: null,    desc: 'Stage — présence totale, observation active, pas de téléphone pendant les soins' },
-      { id: 'fin',      label: 'FIN DE JOURNÉE',  anchor: null,    desc: 'Hygiène · repas · bloc étude 45 min minimum' },
-      { id: 'soir',     label: 'SOIR',            anchor: '21:30', desc: 'Récitation · wind down · sommeil 21:30' },
+      { id: 'matin',   label: 'MATIN',         anchor: '05:30', desc: 'Routine + bloc court révision — physique · hygiène · méditation · départ' },
+      { id: 'journee', label: 'JOURNÉE',        anchor: null,    desc: 'Stage — présence totale, observation active, pas de téléphone pendant les soins' },
+      { id: 'fin',     label: 'FIN DE JOURNÉE', anchor: null,    desc: 'Hygiène · repas · bloc étude 45 min minimum' },
+      { id: 'soir',    label: 'SOIR',           anchor: '21:30', desc: 'Récitation · wind down · sommeil 21:30' },
     ],
 
     interdictionsShort: 'Passivité après stage · scroll',
     validationShort: 'Présence stage + 1 bloc + sommeil',
 
     planning: [
-      { time: '05:30', action: 'Réveil', type: 'anchor' },
-      { time: '05:30–05:45', action: 'Mobilisation physique légère (pompes, étirements)', type: 'physical' },
-      { time: '05:45–06:06', action: 'Méditation (si possible, 10 min minimum)', type: 'core' },
-      { time: '06:10–06:45', action: 'Révision rapide cas du jour / fiche synthèse', type: 'deep' },
-      { time: '07:00', action: 'Départ stage', type: 'anchor' },
-      { time: '08:00–17:00', action: 'Stage — présence totale, observation active', type: 'deep' },
-      { time: '17:30–18:00', action: 'Décompression + transition', type: 'anchor' },
-      { time: '18:00–19:00', action: 'Bloc étude médecine (1 seul, concentré)', type: 'deep' },
-      { time: '19:15–19:30', action: 'Récitation / révision active', type: 'core' },
-      { time: '21:00', action: 'Wind-down, pas d\'écrans', type: 'anchor' },
-      { time: '21:30', action: 'Sommeil', type: 'anchor' },
+      { time: '05:30',       action: 'Réveil',                                                        type: 'anchor'   },
+      { time: '05:30–05:45', action: 'Mobilisation physique légère (pompes, étirements)',             type: 'physical' },
+      { time: '05:45–06:06', action: 'Méditation (si possible, 10 min minimum)',                      type: 'core'     },
+      { time: '06:10–06:45', action: 'Révision rapide cas du jour / fiche synthèse',                 type: 'deep'     },
+      { time: '07:00',       action: 'Départ stage',                                                  type: 'anchor'   },
+      { time: '08:00–17:00', action: 'Stage — présence totale, observation active',                   type: 'deep'     },
+      { time: '17:30–18:00', action: 'Décompression + transition',                                    type: 'anchor'   },
+      { time: '18:00–19:00', action: 'Bloc étude médecine (1 seul, concentré)',                       type: 'deep'     },
+      { time: '19:15–19:30', action: 'Récitation / révision active',                                  type: 'core'     },
+      { time: '21:00',       action: 'Wind-down, pas d\'écrans',                                      type: 'anchor'   },
+      { time: '21:30',       action: 'Sommeil',                                                       type: 'anchor'   },
     ],
 
     core: [
@@ -176,6 +189,9 @@ const MODES = {
     transitionNote: 'Si lendemain garde → mode PRÉ-GARDE. Si lendemain repos → mode RECOVERY léger.',
   },
 
+  // ----------------------------------------------------------
+  // MODE PRÉ-GARDE
+  // ----------------------------------------------------------
   pregarde: {
     id: 'pregarde',
     name: 'MODE PRÉ-GARDE',
@@ -190,30 +206,30 @@ const MODES = {
     immediateAction: 'Préparation système — routine légère · bloc unique d\'étude ciblée urgences.',
 
     blocks: [
-      { id: 'matin',    label: 'MATIN',           anchor: null,    desc: 'Routine légère · bloc unique étude urgences · petit-déjeuner complet' },
-      { id: 'journee',  label: 'JOURNÉE',          anchor: null,    desc: 'Logistique garde · repas nourrissant · hygiène · tâches légères uniquement' },
-      { id: 'central',  label: 'SIESTE',           anchor: '12:30', desc: 'Sieste obligatoire — 60 à 90 min. Non-négociable.' },
-      { id: 'fin',      label: 'FIN DE JOURNÉE',   anchor: '16:00', desc: 'Préparation sac de garde · repas du soir complet' },
-      { id: 'soir',     label: 'SOIR',             anchor: '20:30', desc: 'Wind down total · aucun écran stimulant · sommeil anticipé 20:30' },
+      { id: 'matin',   label: 'MATIN',          anchor: null,    desc: 'Routine légère · bloc unique étude urgences · petit-déjeuner complet' },
+      { id: 'journee', label: 'JOURNÉE',         anchor: null,    desc: 'Logistique garde · repas nourrissant · hygiène · tâches légères uniquement' },
+      { id: 'central', label: 'SIESTE',          anchor: '12:30', desc: 'Sieste obligatoire — 60 à 90 min. Non-négociable.' },
+      { id: 'fin',     label: 'FIN DE JOURNÉE',  anchor: '16:00', desc: 'Préparation sac de garde · repas du soir complet' },
+      { id: 'soir',    label: 'SOIR',            anchor: '20:30', desc: 'Wind down total · aucun écran stimulant · sommeil anticipé 20:30' },
     ],
 
     interdictionsShort: 'Effort intense · écran · stimulation',
     validationShort: 'Sieste + préparation + sommeil anticipé',
 
     planning: [
-      { time: '05:30', action: 'Réveil (si possible, ne pas forcer)', type: 'anchor' },
-      { time: '05:30–05:45', action: 'Mobilisation légère — pas d\'effort intense', type: 'physical' },
-      { time: '05:45–06:06', action: 'Méditation — focus sur la préparation mentale', type: 'core' },
-      { time: '06:15–07:30', action: 'Seul bloc d\'étude de la journée (médecine urgences)', type: 'deep' },
-      { time: '07:30–08:00', action: 'Petit-déjeuner complet et calme', type: 'anchor' },
-      { time: '08:00–12:00', action: 'Tâches légères, organisation, logistique garde', type: 'content' },
-      { time: '12:00–12:30', action: 'Repas nourrissant', type: 'anchor' },
-      { time: '12:30–14:00', action: 'Sieste ou repos horizontal (non-négociable)', type: 'core' },
-      { time: '14:00–16:00', action: 'Activité légère ou révision passive', type: 'content' },
-      { time: '16:00', action: 'Préparation sac de garde', type: 'anchor' },
-      { time: '19:00', action: 'Repas du soir — complet, pas d\'alcool', type: 'anchor' },
-      { time: '20:00', action: 'Wind-down total. Aucun écran stimulant.', type: 'anchor' },
-      { time: '20:30', action: 'Sommeil (coucher anticipé)', type: 'anchor' },
+      { time: '05:30',       action: 'Réveil (si possible, ne pas forcer)',                        type: 'anchor'   },
+      { time: '05:30–05:45', action: 'Mobilisation légère — pas d\'effort intense',               type: 'physical' },
+      { time: '05:45–06:06', action: 'Méditation — focus sur la préparation mentale',             type: 'core'     },
+      { time: '06:15–07:30', action: 'Seul bloc d\'étude de la journée (médecine urgences)',      type: 'deep'     },
+      { time: '07:30–08:00', action: 'Petit-déjeuner complet et calme',                           type: 'anchor'   },
+      { time: '08:00–12:00', action: 'Tâches légères, organisation, logistique garde',            type: 'content'  },
+      { time: '12:00–12:30', action: 'Repas nourrissant',                                         type: 'anchor'   },
+      { time: '12:30–14:00', action: 'Sieste ou repos horizontal (non-négociable)',               type: 'core'     },
+      { time: '14:00–16:00', action: 'Activité légère ou révision passive',                       type: 'content'  },
+      { time: '16:00',       action: 'Préparation sac de garde',                                  type: 'anchor'   },
+      { time: '19:00',       action: 'Repas du soir — complet, pas d\'alcool',                    type: 'anchor'   },
+      { time: '20:00',       action: 'Wind-down total. Aucun écran stimulant.',                   type: 'anchor'   },
+      { time: '20:30',       action: 'Sommeil (coucher anticipé)',                                type: 'anchor'   },
     ],
 
     core: [
@@ -265,6 +281,9 @@ const MODES = {
     transitionNote: 'Demain = GARDE. Tout est préparé. Le repos EST la performance.',
   },
 
+  // ----------------------------------------------------------
+  // MODE GARDE
+  // ----------------------------------------------------------
   garde: {
     id: 'garde',
     name: 'MODE GARDE',
@@ -279,24 +298,24 @@ const MODES = {
     immediateAction: 'Prise de poste — briefing · identification priorités · repas si pas fait.',
 
     blocks: [
-      { id: 'continu',  label: 'EN CONTINU',      anchor: null,    desc: 'Soins · décisions cliniques · transmission propre' },
-      { id: 'opportun', label: 'TEMPS MORT',       anchor: null,    desc: 'Micro-sieste dès possible — fermer les yeux. Pas d\'écran.' },
-      { id: 'physio',   label: 'PHYSIOLOGIQUE',    anchor: null,    desc: 'Manger même sans faim · boire · uriner · hygiène minimale' },
-      { id: 'retour',   label: 'RETOUR',           anchor: null,    desc: 'Transmission soignée · rentrer direct · hygiène · sommeil immédiat' },
+      { id: 'continu',  label: 'EN CONTINU',   anchor: null, desc: 'Soins · décisions cliniques · transmission propre' },
+      { id: 'opportun', label: 'TEMPS MORT',   anchor: null, desc: 'Micro-sieste dès possible — fermer les yeux. Pas d\'écran.' },
+      { id: 'physio',   label: 'PHYSIOLOGIQUE', anchor: null, desc: 'Manger même sans faim · boire · uriner · hygiène minimale' },
+      { id: 'retour',   label: 'RETOUR',        anchor: null, desc: 'Transmission soignée · rentrer direct · hygiène · sommeil immédiat' },
     ],
 
     interdictionsShort: 'Deep work · contenu · sport',
     validationShort: 'Garde tenue + sommeil',
 
     planning: [
-      { time: 'Début garde', action: 'Briefing, prise de poste, identification priorités', type: 'anchor' },
-      { time: 'En continu', action: 'Soins, observations, décisions cliniques', type: 'deep' },
-      { time: 'Temps mort (< 30 min)', action: 'Fermer les yeux / micro-sieste assise', type: 'core' },
-      { time: 'Temps mort (30–60 min)', action: 'Révision active 1 cas clinique', type: 'content' },
-      { time: 'Repas garde', action: 'Manger même si pas faim — protéines prioritaires', type: 'anchor' },
-      { time: 'Fin garde', action: 'Transmission soignée, pas de bâclage', type: 'anchor' },
-      { time: 'Retour', action: 'Transport direct. Pas d\'arrêt inutile.', type: 'anchor' },
-      { time: 'Arrivée domicile', action: 'Repas léger si besoin. Douche. Sommeil immédiat.', type: 'anchor' },
+      { time: 'Début garde',            action: 'Briefing, prise de poste, identification priorités',     type: 'anchor'  },
+      { time: 'En continu',             action: 'Soins, observations, décisions cliniques',               type: 'deep'    },
+      { time: 'Temps mort (< 30 min)',  action: 'Fermer les yeux / micro-sieste assise',                  type: 'core'    },
+      { time: 'Temps mort (30–60 min)', action: 'Révision active 1 cas clinique',                         type: 'content' },
+      { time: 'Repas garde',            action: 'Manger même si pas faim — protéines prioritaires',       type: 'anchor'  },
+      { time: 'Fin garde',              action: 'Transmission soignée, pas de bâclage',                   type: 'anchor'  },
+      { time: 'Retour',                 action: 'Transport direct. Pas d\'arrêt inutile.',                type: 'anchor'  },
+      { time: 'Arrivée domicile',       action: 'Repas léger si besoin. Douche. Sommeil immédiat.',       type: 'anchor'  },
     ],
 
     core: [
@@ -350,6 +369,9 @@ const MODES = {
     transitionNote: 'Après toute garde → mode RECOVERY obligatoire. Pas de négociation.',
   },
 
+  // ----------------------------------------------------------
+  // MODE RECOVERY
+  // ----------------------------------------------------------
   recovery: {
     id: 'recovery',
     name: 'MODE RECOVERY',
@@ -364,26 +386,26 @@ const MODES = {
     immediateAction: 'Nourrir le corps — hydrater · manger · pas d\'alarme.',
 
     blocks: [
-      { id: 'matin',    label: 'MATIN',           anchor: null,    desc: 'Réveil naturel · hygiène · petit-déjeuner complet · méditation courte' },
-      { id: 'journee',  label: 'JOURNÉE',         anchor: null,    desc: 'Marche 20–30 min · repos · sieste si besoin' },
-      { id: 'leger',    label: 'TÂCHES LÉGÈRES',  anchor: null,    desc: 'Lecture passive ou 1 tâche simple uniquement — pas d\'étude intensive' },
-      { id: 'fin',      label: 'SOIR',            anchor: '21:00', desc: 'Repas · hygiène · wind down · sommeil 21:00' },
+      { id: 'matin',  label: 'MATIN',        anchor: null,    desc: 'Réveil naturel · hygiène · petit-déjeuner complet · méditation courte' },
+      { id: 'journee', label: 'JOURNÉE',     anchor: null,    desc: 'Marche 20–30 min · repos · sieste si besoin' },
+      { id: 'leger',  label: 'TÂCHES LÉGÈRES', anchor: null,  desc: 'Lecture passive ou 1 tâche simple uniquement — pas d\'étude intensive' },
+      { id: 'fin',    label: 'SOIR',         anchor: '21:00', desc: 'Repas · hygiène · wind down · sommeil 21:00' },
     ],
 
     interdictionsShort: 'Deep work · culpabilité',
     validationShort: 'Sommeil + marche + alimentation',
 
     planning: [
-      { time: 'Matin', action: 'Réveil naturel — aucune alarme', type: 'anchor' },
-      { time: 'Matin', action: 'Petit-déjeuner complet, protéines, hydratation', type: 'anchor' },
-      { time: 'Matin', action: 'Méditation courte (10 min)', type: 'core' },
-      { time: 'Matin–Midi', action: 'Marche légère 20–30 min (non-négociable)', type: 'physical' },
-      { time: 'Après-midi', action: 'Sieste si besoin', type: 'core' },
-      { time: 'Après-midi', action: 'Révision passive : relire des fiches, pas de nouveau contenu', type: 'content' },
-      { time: 'Après-midi', action: '1 tâche administrative légère si nécessaire', type: 'content' },
-      { time: 'Soir', action: 'Repas nourrissant et calme', type: 'anchor' },
-      { time: '20:30', action: 'Wind-down', type: 'anchor' },
-      { time: '21:00', action: 'Sommeil — retour au rythme normal', type: 'anchor' },
+      { time: 'Matin',       action: 'Réveil naturel — aucune alarme',                                       type: 'anchor'  },
+      { time: 'Matin',       action: 'Petit-déjeuner complet, protéines, hydratation',                      type: 'anchor'  },
+      { time: 'Matin',       action: 'Méditation courte (10 min)',                                           type: 'core'    },
+      { time: 'Matin–Midi',  action: 'Marche légère 20–30 min (non-négociable)',                             type: 'physical'},
+      { time: 'Après-midi',  action: 'Sieste si besoin',                                                     type: 'core'    },
+      { time: 'Après-midi',  action: 'Révision passive : relire des fiches, pas de nouveau contenu',         type: 'content' },
+      { time: 'Après-midi',  action: '1 tâche administrative légère si nécessaire',                          type: 'content' },
+      { time: 'Soir',        action: 'Repas nourrissant et calme',                                           type: 'anchor'  },
+      { time: '20:30',       action: 'Wind-down',                                                            type: 'anchor'  },
+      { time: '21:00',       action: 'Sommeil — retour au rythme normal',                                    type: 'anchor'  },
     ],
 
     core: [
@@ -436,6 +458,9 @@ const MODES = {
     transitionNote: 'Recovery complet → retour en mode NORMAL. Si encore fragile → mode OFF.',
   },
 
+  // ----------------------------------------------------------
+  // MODE OFF
+  // ----------------------------------------------------------
   off: {
     id: 'off',
     name: 'MODE OFF',
@@ -450,24 +475,24 @@ const MODES = {
     immediateAction: 'Calme + respiration — pas d\'alarme, pas d\'écran dans les 10 premières minutes.',
 
     blocks: [
-      { id: 'matin',    label: 'MATIN',           anchor: null,    desc: 'Hygiène · petit-déjeuner lent · méditation même courte' },
-      { id: 'journee',  label: 'JOURNÉE',         anchor: null,    desc: 'Activité libre réelle choisie · mouvement physique agréable' },
-      { id: 'social',   label: 'SOCIAL',          anchor: null,    desc: 'Interaction si désirée — famille, amis, sortie' },
-      { id: 'fin',      label: 'SOIR',            anchor: '21:30', desc: 'Repas · hygiène · sommeil ancré 21:30' },
+      { id: 'matin',   label: 'MATIN',    anchor: null,    desc: 'Hygiène · petit-déjeuner lent · méditation même courte' },
+      { id: 'journee', label: 'JOURNÉE',  anchor: null,    desc: 'Activité libre réelle choisie · mouvement physique agréable' },
+      { id: 'social',  label: 'SOCIAL',   anchor: null,    desc: 'Interaction si désirée — famille, amis, sortie' },
+      { id: 'fin',     label: 'SOIR',     anchor: '21:30', desc: 'Repas · hygiène · sommeil ancré 21:30' },
     ],
 
     interdictionsShort: 'Binge numérique · dérive',
     validationShort: 'Récupération réelle + sommeil maintenu',
 
     planning: [
-      { time: 'Matin', action: 'Réveil naturel ou légèrement plus tard', type: 'anchor' },
-      { time: 'Matin', action: 'Méditation (même 5–10 min)', type: 'core' },
-      { time: 'Matin', action: 'Petit-déjeuner sans précipitation', type: 'anchor' },
-      { time: 'Journée', action: 'Activité choisie librement (lecture, sport, nature, famille)', type: 'content' },
-      { time: 'Journée', action: 'Mouvement physique agréable (marche, vélo, sport plaisir)', type: 'physical' },
-      { time: 'Journée', action: 'Moment de connexion sociale si désiré', type: 'content' },
-      { time: 'Soir', action: 'Bonne nuit de sommeil — retour au rythme', type: 'anchor' },
-      { time: '21:30', action: 'Sommeil (maintenir l\'ancre)', type: 'anchor' },
+      { time: 'Matin',   action: 'Réveil naturel ou légèrement plus tard',                             type: 'anchor'  },
+      { time: 'Matin',   action: 'Méditation (même 5–10 min)',                                         type: 'core'    },
+      { time: 'Matin',   action: 'Petit-déjeuner sans précipitation',                                  type: 'anchor'  },
+      { time: 'Journée', action: 'Activité choisie librement (lecture, sport, nature, famille)',        type: 'content' },
+      { time: 'Journée', action: 'Mouvement physique agréable (marche, vélo, sport plaisir)',          type: 'physical'},
+      { time: 'Journée', action: 'Moment de connexion sociale si désiré',                              type: 'content' },
+      { time: 'Soir',    action: 'Bonne nuit de sommeil — retour au rythme',                           type: 'anchor'  },
+      { time: '21:30',   action: 'Sommeil (maintenir l\'ancre)',                                        type: 'anchor'  },
     ],
 
     core: [
@@ -517,6 +542,9 @@ const MODES = {
     transitionNote: 'Après le OFF → retour en mode NORMAL ou RECOVERY si encore besoin.',
   },
 
+  // ----------------------------------------------------------
+  // MODE REPRISE
+  // ----------------------------------------------------------
   reprise: {
     id: 'reprise',
     name: 'MODE REPRISE',
@@ -531,25 +559,25 @@ const MODES = {
     immediateAction: 'Réveil 05:30 — reset environnement physique. Bureau. Téléphone hors de portée.',
 
     blocks: [
-      { id: 'matin',    label: 'MATIN',           anchor: '05:30', desc: 'Routine + 1 bloc unique d\'étude — méditation en premier, pas d\'excuses' },
-      { id: 'journee',  label: 'JOURNÉE',         anchor: null,    desc: 'Tâches normales sans surcharge — pas de rattrapage' },
-      { id: 'fin',      label: 'FIN DE JOURNÉE',  anchor: null,    desc: 'Sport léger · hygiène · repas' },
-      { id: 'soir',     label: 'SOIR',            anchor: '21:30', desc: 'Récitation optionnelle · sommeil ancré 21:30' },
+      { id: 'matin',   label: 'MATIN',         anchor: '05:30', desc: 'Routine + 1 bloc unique d\'étude — méditation en premier, pas d\'excuses' },
+      { id: 'journee', label: 'JOURNÉE',        anchor: null,    desc: 'Tâches normales sans surcharge — pas de rattrapage' },
+      { id: 'fin',     label: 'FIN DE JOURNÉE', anchor: null,    desc: 'Sport léger · hygiène · repas' },
+      { id: 'soir',    label: 'SOIR',           anchor: '21:30', desc: 'Récitation optionnelle · sommeil ancré 21:30' },
     ],
 
     interdictionsShort: 'Rattrapage · surcharge',
     validationShort: 'Bloc 1 + ancre sommeil',
 
     planning: [
-      { time: '05:30', action: 'Réveil — remettre l\'ancre temporelle', type: 'anchor' },
-      { time: '05:30–05:45', action: 'Mobilisation physique légère', type: 'physical' },
-      { time: '05:45–06:06', action: 'Méditation — sans jugement sur l\'interruption', type: 'core' },
-      { time: '06:10–07:00', action: '1 seul bloc d\'étude — matière prioritaire', type: 'deep' },
-      { time: '07:00–07:15', action: 'Bilan rapide : qu\'est-ce qui a dérivé ?', type: 'content' },
-      { time: 'Journée', action: 'Tâches normales, sans surcompensation', type: 'content' },
-      { time: '16:00–17:00', action: 'Sport (si énergie disponible)', type: 'physical' },
-      { time: '18:00', action: 'Récitation si possible', type: 'core' },
-      { time: '21:30', action: 'Sommeil — remettre l\'ancre', type: 'anchor' },
+      { time: '05:30',       action: 'Réveil — remettre l\'ancre temporelle',                          type: 'anchor'   },
+      { time: '05:30–05:45', action: 'Mobilisation physique légère',                                   type: 'physical' },
+      { time: '05:45–06:06', action: 'Méditation — sans jugement sur l\'interruption',                 type: 'core'     },
+      { time: '06:10–07:00', action: '1 seul bloc d\'étude — matière prioritaire',                    type: 'deep'     },
+      { time: '07:00–07:15', action: 'Bilan rapide : qu\'est-ce qui a dérivé ?',                      type: 'content'  },
+      { time: 'Journée',     action: 'Tâches normales, sans surcompensation',                         type: 'content'  },
+      { time: '16:00–17:00', action: 'Sport (si énergie disponible)',                                  type: 'physical' },
+      { time: '18:00',       action: 'Récitation si possible',                                        type: 'core'     },
+      { time: '21:30',       action: 'Sommeil — remettre l\'ancre',                                   type: 'anchor'   },
     ],
 
     core: [
@@ -600,7 +628,9 @@ const MODES = {
     nextModes: ['normal'],
     transitionNote: 'Reprise réussie → mode NORMAL dès demain. Ne pas rester en Reprise plus d\'une journée.',
   },
+
 };
+
 
 // ============================================================
 // EMERGENCY PROTOCOLS
@@ -730,13 +760,14 @@ const EMERGENCY_PROTOCOLS = [
   },
 ];
 
+
 // ============================================================
 // UNIVERSAL RULES
 // ============================================================
 
 const UNIVERSAL_RULES = [
   'La médecine passe avant le contenu — toujours, sans exception.',
-  'Contenu médical : 15 min maximum par jour en mode normal.',
+  'Contenu médical : 15 minutes maximum par session en mode Normal.',
   'Aucune décision importante dans les 12h post-garde.',
   'L\'heure de coucher est une ancre — pas une suggestion.',
   'Zéro scroll passif. Consommation consciente uniquement.',
@@ -751,6 +782,7 @@ const UNIVERSAL_RULES = [
   'Un mauvais début de journée ne justifie pas un mauvais reste de journée.',
   'Répéter sans perfection vaut mieux que perfectionner sans répéter.',
 ];
+
 
 // ============================================================
 // RESET CHECKLIST
@@ -769,6 +801,7 @@ const RESET_CHECKLIST = [
   'Posture : assis droit, pas avachi',
 ];
 
+
 // ============================================================
 // MEDICAL CONTENT RULES
 // ============================================================
@@ -783,6 +816,7 @@ const MEDICAL_CONTENT_RULES = [
   'Pas de vérification des statistiques pendant la journée de travail',
   'Le contenu se planifie — jamais improvisé au fil de l\'eau',
 ];
+
 
 // ============================================================
 // NUTRITION REMINDERS
@@ -800,6 +834,7 @@ const NUTRITION_REMINDERS = [
   'Repas 20–30 min avant une session physique intense : glucides + protéines légères',
   'Dîner : protéines + légumes, glucides modérés, pas > 2h avant le coucher',
 ];
+
 
 // ============================================================
 // SYSTEM MATERIAL (récitation / cas cliniques)

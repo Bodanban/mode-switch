@@ -90,7 +90,7 @@
   ======================================================== -->
   <div id="screen-mode" class="screen" style="display:none;" aria-live="polite">
 
-    <!-- MODE HEADER — minimal -->
+    <!-- MODE HEADER — sticky 48px bar -->
     <div class="mode-header" id="mode-header">
       <div class="mode-header-left">
         <button class="btn-ghost btn-back" id="btn-back" aria-label="Retour">← RETOUR</button>
@@ -102,18 +102,65 @@
       </div>
     </div>
 
-    <!-- ACTION IMMÉDIATE — dominant, premier regard -->
+    <!-- ACTION IMMÉDIATE — dominant, first thing seen -->
     <div class="immediate-action-block" id="immediate-action-block">
       <div class="ia-label">ACTION IMMÉDIATE</div>
       <div class="ia-text" id="immediate-action-text">—</div>
     </div>
 
-    <!-- BLOCS D'ACTION COMPRESSÉS — 3 à 5 max, visibles tout de suite -->
+    <!-- BLOCS D'ACTION COMPRESSÉS — 3 à 5 max -->
     <div class="action-blocks" id="action-blocks">
       <!-- Rendered by JS -->
     </div>
 
-    <!-- INTERDICTIONS + VALIDATION — toujours visibles, jamais cachés -->
+    <!-- DETAIL PANEL — slides in below blocks when DÉTAILS clicked -->
+    <div class="mode-details-panel" id="mode-details-panel" style="display:none;">
+      <div class="detail-two-col">
+        <div class="detail-section">
+          <div class="block-label">PLANNING DÉTAILLÉ</div>
+          <div class="time-blocks" id="time-blocks"></div>
+        </div>
+        <div class="detail-right-col">
+          <div class="detail-section">
+            <div class="block-label">NOYAU NON-NÉGOCIABLE</div>
+            <ul class="core-list" id="core-list"></ul>
+          </div>
+          <div class="detail-section">
+            <div class="block-label">CHECKLIST DÉMARRAGE</div>
+            <ul class="checklist-list" id="start-checklist" data-list-type="start"></ul>
+            <button class="btn-ghost btn-small check-all-btn" data-target="start">TOUT COCHER</button>
+          </div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <div class="block-label">RÈGLES CRITIQUES</div>
+        <ul class="critical-list" id="critical-list"></ul>
+      </div>
+      <div class="detail-section">
+        <div class="block-label">CHECKLIST FIN DE JOURNÉE</div>
+        <ul class="checklist-list" id="end-checklist" data-list-type="end"></ul>
+        <button class="btn-ghost btn-small check-all-btn" data-target="end">TOUT COCHER</button>
+      </div>
+      <div class="detail-section behavioral-layer">
+        <div class="behavioral-grid">
+          <div class="behavioral-item">
+            <div class="behavioral-item-label">ERREUR CLASSIQUE</div>
+            <div class="behavioral-item-value error-item" id="beh-error">—</div>
+          </div>
+          <div class="behavioral-item">
+            <div class="behavioral-item-label">SIGNAL DE SORTIE</div>
+            <div class="behavioral-item-value" id="beh-exit">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <div class="block-label">MODE SUIVANT</div>
+        <div class="next-modes" id="next-modes"></div>
+        <div class="transition-note" id="transition-note">—</div>
+      </div>
+    </div>
+
+    <!-- INTERDICTIONS + VALIDATION — always visible -->
     <div class="mode-bottom-bar">
       <div class="bottom-bar-col">
         <div class="block-label">INTERDIT</div>
@@ -125,7 +172,7 @@
       </div>
     </div>
 
-    <!-- BOUTON EXÉCUTION PLEIN ÉCRAN -->
+    <!-- EXECUTE BAR -->
     <div class="execute-bar">
       <button class="btn-execute-main" id="btn-execute">▶ J'EXÉCUTE MAINTENANT</button>
       <div class="execute-sub-actions">
@@ -140,7 +187,7 @@
     <!-- COPY CONFIRMATION -->
     <div class="copy-confirmation" id="copy-confirmation" aria-live="polite" style="display:none;">Copié !</div>
 
-    <!-- TIMER WIDGET — compact, toujours accessible -->
+    <!-- TIMER WIDGET — compact row at bottom of content, normal flow (NOT sticky) -->
     <div class="timer-widget" id="timer-widget">
       <div class="timer-display" id="timer-display" aria-live="polite" aria-atomic="true">20:00</div>
       <div class="timer-presets">
@@ -156,50 +203,6 @@
       </div>
       <div class="timer-progress-bar">
         <div class="timer-progress-fill" id="timer-progress-fill" style="width:100%"></div>
-      </div>
-    </div>
-
-    <!-- DÉTAILS CACHÉS — visible uniquement si demandé -->
-    <div class="mode-details-panel" id="mode-details-panel" style="display:none;">
-      <div class="detail-section">
-        <div class="block-label">PLANNING DÉTAILLÉ</div>
-        <div class="time-blocks" id="time-blocks"></div>
-      </div>
-      <div class="detail-section">
-        <div class="block-label">NOYAU NON-NÉGOCIABLE</div>
-        <ul class="core-list" id="core-list"></ul>
-      </div>
-      <div class="detail-section">
-        <div class="block-label">RÈGLES CRITIQUES</div>
-        <ul class="critical-list" id="critical-list"></ul>
-      </div>
-      <div class="detail-section">
-        <div class="block-label">CHECKLIST DÉMARRAGE</div>
-        <ul class="checklist-list" id="start-checklist" data-list-type="start"></ul>
-        <button class="btn-ghost btn-small check-all-btn" data-target="start">TOUT COCHER</button>
-      </div>
-      <div class="detail-section">
-        <div class="block-label">CHECKLIST FIN DE JOURNÉE</div>
-        <ul class="checklist-list" id="end-checklist" data-list-type="end"></ul>
-        <button class="btn-ghost btn-small check-all-btn" data-target="end">TOUT COCHER</button>
-      </div>
-      <div class="detail-section">
-        <div class="block-label">MODE SUIVANT</div>
-        <div class="next-modes" id="next-modes"></div>
-        <div class="transition-note" id="transition-note">—</div>
-      </div>
-      <div class="detail-section behavioral-layer">
-        <div class="block-label">COUCHE COMPORTEMENTALE</div>
-        <div class="behavioral-grid" id="behavioral-grid">
-          <div class="behavioral-item">
-            <div class="behavioral-item-label">ERREUR CLASSIQUE</div>
-            <div class="behavioral-item-value error-item" id="beh-error">—</div>
-          </div>
-          <div class="behavioral-item">
-            <div class="behavioral-item-label">SIGNAL DE SORTIE</div>
-            <div class="behavioral-item-value" id="beh-exit">—</div>
-          </div>
-        </div>
       </div>
     </div>
 

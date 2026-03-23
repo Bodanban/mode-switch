@@ -1,10 +1,41 @@
 /* ============================================================
    STYLES.CSS — Mode Switch Dashboard
-   Mobile-first, pure CSS, no external dependencies
+   Clean rewrite — no conflicting rules, no dead CSS
+   Sections:
+     1.  CSS Variables + Reset
+     2.  Typography utilities
+     3.  Buttons
+     4.  Screens
+     5.  Header bar (home)
+     6.  Suggestion banner
+     7.  Last mode indicator
+     8.  Home screen layout
+     9.  Mode grid + cards
+    10.  Home actions + footer
+    11.  Mode header (clean, single definition)
+    12.  Immediate action block
+    13.  Action blocks (compressed row)
+    14.  Detail panel
+    15.  Bottom bar (interdictions + validation)
+    16.  Execute bar
+    17.  Timer widget (normal flow, NOT sticky)
+    18.  Mode footer
+    19.  Copy confirmation
+    20.  Modals
+    21.  Emergency protocols
+    22.  Universal modal tabs
+    23.  Timer fullscreen overlay
+    24.  Keyboard shortcuts modal
+    25.  Execute overlay (fullscreen)
+    26.  Mode color theming (body[data-mode])
+    27.  Scrollbar styling
+    28.  Print styles
+    29.  Responsive (single breakpoint @768px + small @480px)
    ============================================================ */
 
+
 /* ============================================================
-   CSS CUSTOM PROPERTIES (Design Tokens)
+   1. CSS VARIABLES + RESET
    ============================================================ */
 :root {
   /* Background layers */
@@ -37,7 +68,7 @@
   --warning:        #ffaa33;
   --success:        #44bb88;
 
-  /* Current mode color (updated by JS) */
+  /* Current mode color — updated by body[data-mode] selectors */
   --mode-current:   #4a9eff;
 
   /* Typography */
@@ -50,29 +81,13 @@
   --space-lg:  24px;
   --space-xl:  40px;
 
-  /* Borders radius (sharp, clinical) */
+  /* Border radius — sharp, clinical */
   --radius: 2px;
 
-  /* Transitions */
+  /* Transitions — state changes only */
   --transition: 150ms ease;
 }
 
-/* Light theme overrides */
-body.light-theme {
-  --bg:           #f4f4f0;
-  --surface:      #ffffff;
-  --surface-2:    #ebebeb;
-  --surface-3:    #dedede;
-  --border:       #cccccc;
-  --border-light: #bbbbbb;
-  --text-primary:   #111111;
-  --text-secondary: #555555;
-  --text-muted:     #aaaaaa;
-}
-
-/* ============================================================
-   RESET & BASE
-   ============================================================ */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -128,7 +143,6 @@ kbd {
   background: var(--surface-2);
 }
 
-/* Accessibility */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -141,8 +155,9 @@ kbd {
   border: 0;
 }
 
+
 /* ============================================================
-   TYPOGRAPHY UTILITIES
+   2. TYPOGRAPHY UTILITIES
    ============================================================ */
 .block-label {
   font-size: 0.72rem;
@@ -160,8 +175,9 @@ kbd {
   border-bottom-color: var(--danger);
 }
 
+
 /* ============================================================
-   BUTTONS
+   3. BUTTONS
    ============================================================ */
 .btn-primary {
   display: inline-flex;
@@ -246,15 +262,17 @@ kbd {
   min-width: 200px;
 }
 
+
 /* ============================================================
-   SCREENS
+   4. SCREENS
    ============================================================ */
 .screen {
   min-height: 100vh;
 }
 
+
 /* ============================================================
-   HEADER BAR
+   5. HEADER BAR (home screen top bar)
    ============================================================ */
 .header-bar {
   display: flex;
@@ -308,8 +326,9 @@ kbd {
   align-items: center;
 }
 
+
 /* ============================================================
-   SUGGESTION BANNER
+   6. SUGGESTION BANNER
    ============================================================ */
 .suggestion-banner {
   display: flex;
@@ -349,8 +368,9 @@ kbd {
   font-size: 0.72rem;
 }
 
+
 /* ============================================================
-   LAST MODE INDICATOR
+   7. LAST MODE INDICATOR
    ============================================================ */
 .last-mode-indicator {
   display: flex;
@@ -377,8 +397,9 @@ kbd {
   margin-left: auto;
 }
 
+
 /* ============================================================
-   HOME SCREEN LAYOUT
+   8. HOME SCREEN LAYOUT
    ============================================================ */
 #screen-home {
   max-width: 900px;
@@ -408,8 +429,9 @@ kbd {
   letter-spacing: 0.06em;
 }
 
+
 /* ============================================================
-   MODE GRID
+   9. MODE GRID + CARDS
    ============================================================ */
 .mode-grid {
   display: grid;
@@ -478,8 +500,9 @@ kbd {
   margin-top: 2px;
 }
 
+
 /* ============================================================
-   HOME ACTIONS
+   10. HOME ACTIONS + FOOTER
    ============================================================ */
 .home-actions {
   display: flex;
@@ -496,9 +519,6 @@ kbd {
   max-width: 400px;
 }
 
-/* ============================================================
-   HOME FOOTER
-   ============================================================ */
 .home-footer {
   padding: var(--space-md);
   border-top: 1px solid var(--border);
@@ -512,8 +532,9 @@ kbd {
   letter-spacing: 0.04em;
 }
 
+
 /* ============================================================
-   MODE SCREEN
+   11. MODE HEADER — single clean definition, sticky 48px bar
    ============================================================ */
 #screen-mode {
   max-width: 1100px;
@@ -521,15 +542,13 @@ kbd {
   padding-bottom: var(--space-xl);
 }
 
-/* ============================================================
-   MODE HEADER
-   ============================================================ */
 .mode-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-md);
-  padding: var(--space-md);
+  padding: 0 var(--space-md);
+  height: 48px;
   background: var(--surface);
   border-bottom: 2px solid var(--mode-current);
   position: sticky;
@@ -539,8 +558,17 @@ kbd {
 
 .mode-header-left {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-md);
+  flex: 1;
+  min-width: 0;
+}
+
+.mode-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
 }
 
 .btn-back {
@@ -548,7 +576,7 @@ kbd {
   font-size: 0.75rem;
   color: var(--text-muted);
   white-space: nowrap;
-  margin-top: 2px;
+  flex-shrink: 0;
 }
 
 .btn-back:hover {
@@ -556,30 +584,14 @@ kbd {
 }
 
 .mode-name {
-  font-size: 2rem;
+  font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   color: var(--mode-current);
   line-height: 1;
-  margin-bottom: 6px;
-}
-
-.mode-meta {
-  display: flex;
-  gap: var(--space-sm);
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.mode-badge {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 2px 6px;
-  border: 1px solid var(--mode-current);
-  color: var(--mode-current);
-  border-radius: var(--radius);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mode-energy {
@@ -587,111 +599,153 @@ kbd {
   letter-spacing: 0.1em;
   color: var(--text-secondary);
   text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.mode-header-right {
-  text-align: right;
-  max-width: 380px;
-}
-
-.mode-intent {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  font-style: italic;
-  margin-bottom: 4px;
-}
-
-.mode-when {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  line-height: 1.4;
-}
 
 /* ============================================================
-   MODE OBJECTIVE BLOCK
+   12. IMMEDIATE ACTION BLOCK — dominant, color-accented
    ============================================================ */
-.mode-objective-block {
-  padding: var(--space-lg) var(--space-md);
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-}
-
-.mode-objective {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.5;
-  letter-spacing: 0.02em;
+.immediate-action-block {
+  margin: var(--space-md) var(--space-md) 0;
+  padding: var(--space-md) var(--space-lg);
   border-left: 4px solid var(--mode-current);
-  padding-left: var(--space-md);
-  margin-top: var(--space-sm);
-}
-
-/* ============================================================
-   CRITICAL RULES BLOCK
-   ============================================================ */
-.critical-rules {
-  margin: var(--space-md);
-  padding: var(--space-md);
-  background: rgba(255, 68, 68, 0.04);
-  border: 1px solid rgba(255, 68, 68, 0.2);
-  border-left: 4px solid var(--danger);
+  background: rgba(255, 255, 255, 0.03);
   border-radius: var(--radius);
 }
 
-.critical-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  margin-top: var(--space-sm);
-}
-
-.critical-list li {
-  font-size: 0.85rem;
-  color: var(--text-primary);
-  padding-left: var(--space-md);
-  position: relative;
-  line-height: 1.5;
-}
-
-.critical-list li::before {
-  content: '!';
-  position: absolute;
-  left: 0;
-  color: var(--danger);
+.ia-label {
+  font-size: 0.68rem;
   font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--mode-current);
+  text-transform: uppercase;
+  margin-bottom: 6px;
 }
+
+.ia-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
 
 /* ============================================================
-   MODE BODY (two-column layout)
+   13. ACTION BLOCKS — compressed, 3–5 blocks in a row
    ============================================================ */
-.mode-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  padding: var(--space-md);
+.action-blocks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-sm);
+  margin: var(--space-sm) var(--space-md) var(--space-md);
 }
 
-.mode-main-col,
-.mode-sidebar-col {
+.action-block {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.action-block--active {
+  border-left-color: var(--mode-current);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.action-block--past {
+  opacity: 0.38;
+}
+
+.action-block-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: 5px;
+  flex-wrap: wrap;
+}
+
+.action-block-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.action-block--active .action-block-label {
+  color: var(--mode-current);
+}
+
+.action-block-anchor {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.action-block--active .action-block-anchor {
+  color: var(--mode-current);
+}
+
+.action-block-now {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--mode-current);
+  border: 1px solid var(--mode-current);
+  padding: 1px 5px;
+  border-radius: var(--radius);
+  white-space: nowrap;
+}
+
+.action-block-desc {
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  line-height: 1.45;
+}
+
+.action-block--past .action-block-desc {
+  color: var(--text-muted);
+}
+
+
+/* ============================================================
+   14. DETAIL PANEL — slides in below action blocks
+   ============================================================ */
+.mode-details-panel {
+  margin: 0 var(--space-md) var(--space-md);
+  padding: var(--space-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.detail-two-col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.detail-right-col {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
 }
 
-/* ============================================================
-   MODE SECTIONS (shared)
-   ============================================================ */
-.mode-section {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: var(--space-md);
+.detail-section {
+  margin-bottom: var(--space-lg);
 }
 
-/* ============================================================
-   PLANNING BLOCK — TIME BLOCKS
-   ============================================================ */
+.detail-section:last-child {
+  margin-bottom: 0;
+}
+
+/* Time blocks */
 .time-blocks {
   display: flex;
   flex-direction: column;
@@ -727,7 +781,20 @@ kbd {
   line-height: 1.4;
 }
 
-/* Type-specific styling */
+.time-block-now-label {
+  display: none;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--mode-current);
+  border: 1px solid var(--mode-current);
+  padding: 1px 5px;
+  border-radius: var(--radius);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Time block type styling */
 .time-block[data-type="anchor"] {
   border-left-color: var(--text-muted);
 }
@@ -738,7 +805,6 @@ kbd {
 
 .time-block[data-type="deep"] {
   border-left-color: var(--mode-current);
-  background: rgba(74, 158, 255, 0.04);
 }
 
 .time-block[data-type="deep"] .time-block-action {
@@ -761,21 +827,16 @@ kbd {
   border-left-color: var(--mode-stage);
 }
 
-/* ============================================================
-   TIME BLOCK — CURRENT HOUR HIGHLIGHTING
-   ============================================================ */
-
-/* Bloc actif : en cours maintenant */
+/* Active time block */
 .time-block--active {
-  background: rgba(240, 240, 240, 0.06) !important;
-  border-left-color: var(--mode-current) !important;
+  background: rgba(240, 240, 240, 0.06);
+  border-left-color: var(--mode-current);
   border-left-width: 3px;
-  padding-left: calc(var(--space-md) - 1px); /* compensate extra px */
-  position: relative;
+  padding-left: calc(var(--space-md) - 1px);
 }
 
 .time-block--active .time-block-time {
-  color: var(--mode-current) !important;
+  color: var(--mode-current);
   font-weight: 700;
 }
 
@@ -784,50 +845,30 @@ kbd {
   font-weight: 700;
 }
 
-/* Badge "EN COURS" — affiché uniquement sur le bloc actif */
-.time-block-now-label {
-  display: none;
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--mode-current);
-  border: 1px solid var(--mode-current);
-  padding: 1px 5px;
-  border-radius: var(--radius);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
 .time-block--active .time-block-now-label {
   display: inline-flex;
 }
 
-/* Bloc suivant */
-.time-block--next {
-  opacity: 1;
-}
-
+/* Next time block */
 .time-block--next .time-block-time {
-  color: var(--text-secondary) !important;
+  color: var(--text-secondary);
 }
 
 .time-block--next .time-block-action {
   color: var(--text-secondary);
 }
 
-/* Blocs passés : atténués */
+/* Past time blocks */
 .time-block--past {
   opacity: 0.35;
 }
 
 .time-block--past .time-block-time {
   text-decoration: line-through;
-  color: var(--text-muted) !important;
+  color: var(--text-muted);
 }
 
-/* ============================================================
-   CORE BLOCK
-   ============================================================ */
+/* Core list */
 .core-list {
   display: flex;
   flex-direction: column;
@@ -856,35 +897,30 @@ kbd {
   color: var(--mode-current);
 }
 
-/* ============================================================
-   INTERDICTIONS BLOCK
-   ============================================================ */
-.interdictions-list {
+/* Critical rules list */
+.critical-list {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
 }
 
-.interdiction-item {
-  font-size: 0.82rem;
-  color: var(--text-secondary);
-  padding: 4px 0;
-  padding-left: var(--space-lg);
+.critical-list li {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  padding-left: var(--space-md);
   position: relative;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
-.interdiction-item::before {
-  content: '✗';
+.critical-list li::before {
+  content: '!';
   position: absolute;
   left: 0;
   color: var(--danger);
   font-weight: 700;
 }
 
-/* ============================================================
-   CHECKLISTS
-   ============================================================ */
+/* Checklists */
 .checklist-list {
   display: flex;
   flex-direction: column;
@@ -903,10 +939,6 @@ kbd {
 
 .checklist-item:last-child {
   border-bottom: none;
-}
-
-.checklist-item input[type="checkbox"] {
-  display: none;
 }
 
 .checklist-checkbox {
@@ -973,12 +1005,10 @@ kbd {
   border-color: var(--border-light);
 }
 
-/* ============================================================
-   BEHAVIORAL LAYER
-   ============================================================ */
+/* Behavioral layer */
 .behavioral-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: var(--space-sm);
 }
 
@@ -1008,9 +1038,7 @@ kbd {
   color: var(--warning);
 }
 
-/* ============================================================
-   NEXT MODE SUGGESTION
-   ============================================================ */
+/* Next modes */
 .next-modes {
   display: flex;
   gap: var(--space-sm);
@@ -1048,35 +1076,121 @@ kbd {
   border-radius: var(--radius);
 }
 
+
 /* ============================================================
-   TIMER WIDGET
+   15. BOTTOM BAR — interdictions + validation always visible
+   ============================================================ */
+.mode-bottom-bar {
+  display: flex;
+  gap: var(--space-lg);
+  margin: 0 var(--space-md) var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.bottom-bar-col {
+  flex: 1;
+}
+
+.bottom-bar-col .block-label {
+  font-size: 0.62rem;
+  margin-bottom: 3px;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.interdictions-inline {
+  font-size: 0.78rem;
+  color: var(--danger);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.validation-inline {
+  font-size: 0.78rem;
+  color: var(--success);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+
+/* ============================================================
+   16. EXECUTE BAR
+   ============================================================ */
+.execute-bar {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  align-items: stretch;
+}
+
+.btn-execute-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px 24px;
+  background: var(--mode-current);
+  color: #000;
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: opacity var(--transition);
+}
+
+.btn-execute-main:hover {
+  opacity: 0.88;
+}
+
+.execute-sub-actions {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+
+/* ============================================================
+   17. TIMER WIDGET — compact row, normal document flow (NOT sticky)
    ============================================================ */
 .timer-widget {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  flex-wrap: wrap;
 }
 
 .timer-display {
-  font-size: 2.8rem;
+  font-size: 1.8rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   color: var(--text-primary);
   line-height: 1;
-  margin: var(--space-md) 0;
   font-variant-numeric: tabular-nums;
+  min-width: 90px;
+  flex-shrink: 0;
 }
 
 .timer-presets {
   display: flex;
   gap: var(--space-xs);
-  justify-content: center;
-  margin-bottom: var(--space-sm);
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .timer-preset {
   border: 1px solid var(--border);
   color: var(--text-muted);
-  min-width: 55px;
+  min-width: 40px;
 }
 
 .timer-preset:hover {
@@ -1092,16 +1206,16 @@ kbd {
 .timer-controls {
   display: flex;
   gap: var(--space-sm);
-  justify-content: center;
-  margin-bottom: var(--space-sm);
 }
 
 .timer-progress-bar {
+  flex: 1;
+  min-width: 80px;
   height: 3px;
   background: var(--border);
   border-radius: 1px;
   overflow: hidden;
-  margin-top: var(--space-sm);
+  align-self: center;
 }
 
 .timer-progress-fill {
@@ -1118,39 +1232,23 @@ kbd {
   color: var(--mode-current);
 }
 
+
 /* ============================================================
-   MODE ACTIONS BAR
+   18. MODE FOOTER
    ============================================================ */
-.mode-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  padding: var(--space-md);
-  border-top: 1px solid var(--border);
-  background: var(--surface);
-  position: sticky;
-  bottom: 0;
-  z-index: 100;
-}
-
-.mode-actions button {
-  flex: 1;
-  min-width: 120px;
-  font-size: 0.78rem;
-}
-
 .mode-footer {
   padding: var(--space-sm) var(--space-md);
   text-align: center;
   border-top: 1px solid var(--border);
 }
 
+
 /* ============================================================
-   COPY CONFIRMATION
+   19. COPY CONFIRMATION
    ============================================================ */
 .copy-confirmation {
   position: fixed;
-  bottom: 80px;
+  bottom: var(--space-lg);
   right: var(--space-lg);
   padding: var(--space-sm) var(--space-md);
   background: var(--success);
@@ -1162,8 +1260,9 @@ kbd {
   z-index: 200;
 }
 
+
 /* ============================================================
-   MODALS
+   20. MODALS
    ============================================================ */
 .modal-overlay {
   position: fixed;
@@ -1245,8 +1344,9 @@ kbd {
   border-top: 1px solid var(--border);
 }
 
+
 /* ============================================================
-   EMERGENCY PROTOCOLS
+   21. EMERGENCY PROTOCOLS
    ============================================================ */
 .emergency-protocols {
   display: flex;
@@ -1390,8 +1490,9 @@ kbd {
   font-weight: 700;
 }
 
+
 /* ============================================================
-   UNIVERSAL MODAL TABS
+   22. UNIVERSAL MODAL TABS
    ============================================================ */
 .universal-tabs {
   display: flex;
@@ -1450,8 +1551,9 @@ kbd {
   font-size: 0.8rem;
 }
 
+
 /* ============================================================
-   TIMER FULLSCREEN OVERLAY
+   23. TIMER FULLSCREEN OVERLAY
    ============================================================ */
 .timer-fullscreen-overlay {
   position: fixed;
@@ -1517,9 +1619,7 @@ kbd {
   flex-wrap: wrap;
 }
 
-/* ============================================================
-   TIMER DONE FLASH
-   ============================================================ */
+/* Timer done flash — one-off animation on state change */
 @keyframes done-flash {
   0%   { opacity: 1; }
   50%  { opacity: 0.3; }
@@ -1530,8 +1630,9 @@ kbd {
   animation: done-flash 400ms ease 3;
 }
 
+
 /* ============================================================
-   KEYBOARD SHORTCUTS MODAL
+   24. KEYBOARD SHORTCUTS MODAL
    ============================================================ */
 .shortcuts-grid {
   display: grid;
@@ -1558,477 +1659,9 @@ kbd {
   color: var(--text-secondary);
 }
 
-/* ============================================================
-   PRINT STYLES
-   ============================================================ */
-@media print {
-  body.printing {
-    background: white;
-    color: black;
-  }
-
-  body.printing .header-bar,
-  body.printing .mode-actions,
-  body.printing .mode-footer,
-  body.printing .timer-widget,
-  body.printing .next-mode-suggestion,
-  body.printing #screen-home,
-  body.printing .modal-overlay {
-    display: none !important;
-  }
-
-  body.printing #screen-mode {
-    display: block !important;
-    max-width: 100%;
-  }
-
-  body.printing .mode-section {
-    border: 1px solid #ccc;
-    page-break-inside: avoid;
-  }
-
-  body.printing .mode-body {
-    display: flex;
-    flex-direction: row;
-  }
-}
 
 /* ============================================================
-   RESPONSIVE — TABLET (768px+)
-   ============================================================ */
-@media (min-width: 768px) {
-  html {
-    font-size: 14px;
-  }
-
-  .mode-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .home-actions {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .home-actions .btn-primary,
-  .home-actions .btn-secondary,
-  .home-actions .btn-danger {
-    width: auto;
-    flex: 0 0 auto;
-  }
-
-  .mode-objective {
-    font-size: 1.3rem;
-  }
-
-  .behavioral-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .mode-name {
-    font-size: 2.2rem;
-  }
-
-  .shortcuts-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-/* ============================================================
-   RESPONSIVE — DESKTOP (1024px+)
-   ============================================================ */
-@media (min-width: 1024px) {
-  html {
-    font-size: 15px;
-  }
-
-  #screen-home {
-    padding-top: var(--space-md);
-  }
-
-  .mode-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  .mode-card-intent {
-    display: block;
-  }
-
-  .mode-body {
-    flex-direction: row;
-    align-items: flex-start;
-    gap: var(--space-md);
-    padding: var(--space-md);
-  }
-
-  .mode-main-col {
-    flex: 0 0 62%;
-  }
-
-  .mode-sidebar-col {
-    flex: 0 0 calc(38% - var(--space-md));
-  }
-
-  .mode-objective {
-    font-size: 1.4rem;
-  }
-
-  .mode-name {
-    font-size: 2.5rem;
-  }
-
-  .timer-display {
-    font-size: 3.2rem;
-  }
-
-  .home-title {
-    font-size: 2.4rem;
-  }
-}
-
-/* ============================================================
-   MOBILE-SPECIFIC (< 480px)
-   ============================================================ */
-@media (max-width: 479px) {
-  .mode-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .mode-card {
-    padding: var(--space-sm) var(--space-sm) var(--space-sm) calc(var(--space-sm) + 3px);
-  }
-
-  .mode-card-intent {
-    display: none;
-  }
-
-  .mode-name {
-    font-size: 1.6rem;
-  }
-
-  .mode-header {
-    flex-direction: column;
-  }
-
-  .mode-header-right {
-    text-align: left;
-    max-width: 100%;
-  }
-
-  .mode-objective {
-    font-size: 1.1rem;
-  }
-
-  .critical-rules {
-    margin: var(--space-sm);
-  }
-
-  .mode-actions {
-    gap: 4px;
-  }
-
-  .mode-actions button {
-    font-size: 0.7rem;
-    padding: 8px 10px;
-  }
-
-  .shortcuts-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .timer-display {
-    font-size: 2.4rem;
-  }
-
-  .header-bar {
-    flex-wrap: wrap;
-    gap: var(--space-sm);
-  }
-
-  .header-center {
-    width: 100%;
-    order: 3;
-    text-align: left;
-  }
-
-  .system-quote {
-    display: none;
-  }
-
-  .action-blocks {
-    grid-template-columns: 1fr;
-  }
-
-  .mode-bottom-bar {
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-
-  .execute-bar {
-    padding: var(--space-sm);
-  }
-
-  .btn-execute-main {
-    font-size: 1rem;
-    padding: 14px 20px;
-  }
-
-  .execute-sub-actions {
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
-  .timer-widget {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-/* ============================================================
-   ACTION IMMÉDIATE BLOCK
-   ============================================================ */
-.immediate-action-block {
-  margin: var(--space-md);
-  padding: var(--space-md) var(--space-lg);
-  border-left: 4px solid var(--mode-current);
-  background: rgba(255,255,255,0.03);
-}
-
-.ia-label {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  color: var(--mode-current);
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-
-.ia-text {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.4;
-}
-
-/* ============================================================
-   ACTION BLOCKS — compressed 3–5 blocks
-   ============================================================ */
-.action-blocks {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-sm);
-  margin: 0 var(--space-md) var(--space-md);
-}
-
-.action-block {
-  padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  transition: border-color var(--transition), background var(--transition);
-}
-
-.action-block--active {
-  border-left-color: var(--mode-current) !important;
-  background: rgba(255,255,255,0.04);
-}
-
-.action-block--past {
-  opacity: 0.38;
-}
-
-.action-block-header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  margin-bottom: 5px;
-}
-
-.action-block-label {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-}
-
-.action-block--active .action-block-label {
-  color: var(--mode-current);
-}
-
-.action-block-anchor {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  margin-left: auto;
-}
-
-.action-block--active .action-block-anchor {
-  color: var(--mode-current);
-}
-
-.action-block-now {
-  font-size: 0.58rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--mode-current);
-  border: 1px solid var(--mode-current);
-  padding: 1px 5px;
-  border-radius: var(--radius);
-  white-space: nowrap;
-}
-
-.action-block-desc {
-  font-size: 0.82rem;
-  color: var(--text-primary);
-  line-height: 1.45;
-}
-
-.action-block--past .action-block-desc {
-  color: var(--text-muted);
-}
-
-/* ============================================================
-   BOTTOM BAR — interdictions + validation toujours visibles
-   ============================================================ */
-.mode-bottom-bar {
-  display: flex;
-  gap: var(--space-lg);
-  margin: 0 var(--space-md) var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-}
-
-.bottom-bar-col {
-  flex: 1;
-}
-
-.bottom-bar-col .block-label {
-  font-size: 0.62rem;
-  margin-bottom: 3px;
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.interdictions-inline {
-  font-size: 0.78rem;
-  color: var(--danger);
-  font-weight: 600;
-}
-
-.validation-inline {
-  font-size: 0.78rem;
-  color: var(--success);
-  font-weight: 600;
-}
-
-/* ============================================================
-   EXECUTE BAR
-   ============================================================ */
-.execute-bar {
-  padding: var(--space-md);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  align-items: stretch;
-}
-
-.btn-execute-main {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 16px 24px;
-  background: var(--mode-current);
-  color: #000;
-  font-family: var(--font-mono);
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: opacity var(--transition);
-}
-
-.btn-execute-main:hover {
-  opacity: 0.88;
-}
-
-.execute-sub-actions {
-  display: flex;
-  gap: var(--space-sm);
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-/* ============================================================
-   MODE HEADER — new minimal layout
-   ============================================================ */
-.mode-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-sm) var(--space-md);
-  border-bottom: 2px solid var(--border);
-  position: sticky;
-  top: 0;
-  background: var(--surface);
-  z-index: 100;
-  gap: var(--space-md);
-}
-
-.mode-header-left {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-}
-
-.mode-header-right {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-/* ============================================================
-   TIMER WIDGET — compact row
-   ============================================================ */
-.timer-widget {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-sm) var(--space-md);
-  border-top: 1px solid var(--border);
-  background: var(--surface);
-  position: sticky;
-  bottom: 0;
-}
-
-/* ============================================================
-   DETAIL PANEL
-   ============================================================ */
-.mode-details-panel {
-  margin: var(--space-md);
-  padding: var(--space-md);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-}
-
-.detail-section {
-  margin-bottom: var(--space-lg);
-}
-
-.detail-section:last-child {
-  margin-bottom: 0;
-}
-
-/* ============================================================
-   EXECUTE OVERLAY — plein écran action immédiate
+   25. EXECUTE OVERLAY — fullscreen on black
    ============================================================ */
 .execute-overlay {
   position: fixed;
@@ -2063,12 +1696,6 @@ kbd {
   margin-bottom: var(--space-xl);
 }
 
-@media (max-width: 480px) {
-  .execute-overlay-action {
-    font-size: 1.15rem;
-  }
-}
-
 .execute-overlay-validation {
   font-size: 0.82rem;
   color: var(--success);
@@ -2089,9 +1716,10 @@ kbd {
   font-size: 1rem;
 }
 
+
 /* ============================================================
-   MODE-SPECIFIC DYNAMIC COLORS
-   Applied by JS: body[data-mode="..."]
+   26. MODE COLOR THEMING — body[data-mode] selectors
+       Updates --mode-current CSS variable per active mode
    ============================================================ */
 body[data-mode="normal"]   { --mode-current: var(--mode-normal); }
 body[data-mode="stage"]    { --mode-current: var(--mode-stage); }
@@ -2101,7 +1729,7 @@ body[data-mode="recovery"] { --mode-current: var(--mode-recovery); }
 body[data-mode="off"]      { --mode-current: var(--mode-off); }
 body[data-mode="reprise"]  { --mode-current: var(--mode-reprise); }
 
-/* deep type block color follows mode */
+/* Deep work block tint follows mode color */
 body[data-mode="normal"]   .time-block[data-type="deep"] { background: rgba(74, 158, 255, 0.04); }
 body[data-mode="stage"]    .time-block[data-type="deep"] { background: rgba(136, 136, 170, 0.04); }
 body[data-mode="pregarde"] .time-block[data-type="deep"] { background: rgba(255, 170, 51, 0.04); }
@@ -2110,21 +1738,9 @@ body[data-mode="recovery"] .time-block[data-type="deep"] { background: rgba(68, 
 body[data-mode="off"]      .time-block[data-type="deep"] { background: rgba(102, 170, 204, 0.04); }
 body[data-mode="reprise"]  .time-block[data-type="deep"] { background: rgba(255, 136, 68, 0.04); }
 
-/* ============================================================
-   FOCUS MODE (when in execute state)
-   ============================================================ */
-body.focus-mode .mode-actions .btn-execute {
-  animation: pulse-border 2s ease infinite;
-}
-
-@keyframes pulse-border {
-  0%   { opacity: 1; }
-  50%  { opacity: 0.7; }
-  100% { opacity: 1; }
-}
 
 /* ============================================================
-   SCROLLBAR STYLING
+   27. SCROLLBAR STYLING
    ============================================================ */
 ::-webkit-scrollbar {
   width: 6px;
@@ -2142,4 +1758,206 @@ body.focus-mode .mode-actions .btn-execute {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
+}
+
+
+/* ============================================================
+   28. PRINT STYLES
+   ============================================================ */
+@media print {
+  body.printing {
+    background: white;
+    color: black;
+  }
+
+  body.printing .header-bar,
+  body.printing .mode-header,
+  body.printing .execute-bar,
+  body.printing .timer-widget,
+  body.printing .mode-footer,
+  body.printing #screen-home,
+  body.printing .modal-overlay {
+    display: none !important;
+  }
+
+  body.printing #screen-mode {
+    display: block !important;
+    max-width: 100%;
+  }
+
+  body.printing .immediate-action-block,
+  body.printing .action-blocks,
+  body.printing .mode-details-panel,
+  body.printing .mode-bottom-bar {
+    page-break-inside: avoid;
+  }
+}
+
+
+/* ============================================================
+   29. LIGHT THEME OVERRIDES
+   ============================================================ */
+body.light-theme {
+  --bg:             #f4f4f0;
+  --surface:        #ffffff;
+  --surface-2:      #ebebeb;
+  --surface-3:      #dedede;
+  --border:         #cccccc;
+  --border-light:   #bbbbbb;
+  --text-primary:   #111111;
+  --text-secondary: #555555;
+  --text-muted:     #aaaaaa;
+}
+
+
+/* ============================================================
+   RESPONSIVE — TABLET+ (768px and above)
+   ============================================================ */
+@media (min-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+
+  .mode-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .home-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .home-actions .btn-primary,
+  .home-actions .btn-secondary,
+  .home-actions .btn-danger {
+    width: auto;
+    flex: 0 0 auto;
+  }
+
+  .mode-name {
+    font-size: 1.1rem;
+  }
+
+  .shortcuts-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .detail-two-col {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .behavioral-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .timer-widget {
+    flex-wrap: nowrap;
+  }
+
+  .timer-display {
+    font-size: 2rem;
+  }
+
+  #screen-home {
+    padding-top: var(--space-md);
+  }
+
+  .mode-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .home-title {
+    font-size: 2.4rem;
+  }
+}
+
+
+/* ============================================================
+   RESPONSIVE — SMALL MOBILE (max 480px)
+   ============================================================ */
+@media (max-width: 480px) {
+  .mode-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .mode-card {
+    padding: var(--space-sm) var(--space-sm) var(--space-sm) calc(var(--space-sm) + 3px);
+  }
+
+  .mode-card-intent {
+    display: none;
+  }
+
+  .header-bar {
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .header-center {
+    width: 100%;
+    order: 3;
+    text-align: left;
+  }
+
+  .system-quote {
+    display: none;
+  }
+
+  .mode-header {
+    height: auto;
+    min-height: 48px;
+    flex-wrap: wrap;
+    padding: var(--space-xs) var(--space-sm);
+  }
+
+  .mode-header-left {
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+
+  .action-blocks {
+    grid-template-columns: 1fr;
+  }
+
+  .mode-bottom-bar {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .behavioral-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .execute-bar {
+    padding: var(--space-sm);
+  }
+
+  .btn-execute-main {
+    font-size: 1rem;
+    padding: 14px 20px;
+  }
+
+  .execute-sub-actions {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .execute-overlay-action {
+    font-size: 1.15rem;
+  }
+
+  .timer-widget {
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .timer-progress-bar {
+    width: 100%;
+    flex-basis: 100%;
+  }
+
+  .shortcuts-grid {
+    grid-template-columns: 1fr;
+  }
 }

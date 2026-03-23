@@ -25,14 +25,14 @@
     'Reprendre n\'est pas échouer — c\'est le système qui fonctionne.',
   ];
 
-  // Mode order for keyboard shortcuts
+  // Mode order for keyboard shortcuts 1–7
   const MODE_ORDER = ['normal', 'stage', 'pregarde', 'garde', 'recovery', 'off', 'reprise'];
 
   // ============================================================
   // STATE
   // ============================================================
   const State = {
-    currentMode: null,            // selected mode id (not yet entered)
+    currentMode: null,            // selected mode id (highlighted on home, not yet entered)
     activeMode: null,             // currently active/entered mode id
     activeScreen: 'home',         // 'home' | 'mode'
     theme: 'dark',
@@ -48,6 +48,7 @@
     },
     timerFullscreen: false,
     suggestionDismissed: false,
+    _planningInterval: null,
   };
 
   // ============================================================
@@ -99,7 +100,7 @@
     const announcer = el('sr-announcer');
     if (announcer) {
       announcer.textContent = '';
-      setTimeout(() => { announcer.textContent = message; }, 50);
+      setTimeout(function () { announcer.textContent = message; }, 50);
     }
   }
 
@@ -141,7 +142,7 @@
     State.checklistState = lsGetJSON('checklistState', {});
     State.suggestionDismissed = lsGet('suggestionDismissed', null) === 'true';
 
-    // Re-open last active mode if it was recently active (within same day)
+    // Re-select last active mode if still valid
     const savedActiveMode = lsGet('activeMode', null);
     if (savedActiveMode && MODES[savedActiveMode]) {
       State.activeMode = savedActiveMode;
@@ -170,7 +171,6 @@
   function updateClock() {
     const now = new Date();
 
-    // Time display HH:MM:SS
     const timeStr = now.toLocaleTimeString('fr-FR', {
       hour: '2-digit',
       minute: '2-digit',
@@ -178,7 +178,6 @@
       hour12: false,
     });
 
-    // Date display in French
     const dateStr = now.toLocaleDateString('fr-FR', {
       weekday: 'long',
       day: 'numeric',
@@ -199,9 +198,7 @@
     const hourNow = new Date().getHours();
     const msSinceLastMode = lastTS ? now - lastTS : null;
     const HOUR = 3600000;
-    const DAY = 86400000;
 
-    // If dismissed recently (same session), don't show again
     if (State.suggestionDismissed) {
       return { show: false, message: '', targetMode: null };
     }
@@ -242,21 +239,12 @@
       };
     }
 
-    // Early morning without mode set, suggest checking garde
+    // Early morning without mode set
     if (hourNow >= 5 && hourNow < 7 && !State.activeMode) {
       return {
         show: true,
         message: 'Début de journée — identifie ton mode avant de commencer.',
         targetMode: null,
-      };
-    }
-
-    // Pre-garde suggestion in the afternoon
-    if (hourNow >= 14 && hourNow < 20 && State.lastMode === 'normal') {
-      return {
-        show: false, // subtle — don't always show this
-        message: 'Garde demain ? Passe en mode PRÉ-GARDE dès maintenant.',
-        targetMode: 'pregarde',
       };
     }
 
@@ -327,10 +315,10 @@
     const days = Math.floor(diff / 86400000);
 
     if (minutes < 5) return 'à l\'instant';
-    if (minutes < 60) return `il y a ${minutes} min`;
-    if (hours < 24) return `il y a ${hours}h`;
+    if (minutes < 60) return 'il y a ' + minutes + ' min';
+    if (hours < 24) return 'il y a ' + hours + 'h';
     if (days === 1) return 'hier';
-    return `il y a ${days} jours`;
+    return 'il y a ' + days + ' jours';
   }
 
   // ============================================================
@@ -404,7 +392,7 @@
       enterBtn.textContent = 'ENTRER — ' + MODES[modeId].shortName.toUpperCase();
     }
 
-    // Set mode color
+    // Set mode color CSS variable
     document.body.setAttribute('data-mode', modeId);
 
     announce('Mode sélectionné : ' + MODES[modeId].name);
@@ -419,12 +407,11 @@
 
     const mode = MODES[modeId];
 
-    // Update state
     State.activeMode = modeId;
     State.currentMode = modeId;
     State.activeScreen = 'mode';
 
-    // Save to localStorage
+    // Persist
     lsSet('lastMode', modeId);
     lsSet('activeMode', modeId);
     lsSet('lastModeTimestamp', Date.now().toString());
@@ -434,7 +421,7 @@
     // Apply mode color
     document.body.setAttribute('data-mode', modeId);
 
-    // Render mode screen
+    // Render mode screen content
     renderModeScreen(mode);
 
     // Switch screens
@@ -452,38 +439,41 @@
   }
 
   // ============================================================
-  // RENDER MODE SCREEN — compressed block logic
+  // RENDER MODE SCREEN
+  // This is the single clean entry point for populating all
+  // mode screen elements. No legacy/old layout calls here.
   // ============================================================
   function renderModeScreen(mode) {
-    // HEADER
+    // --- HEADER ---
     setText('mode-name', mode.name);
     setText('mode-energy', mode.energyLevel);
 
+    // Update header border color directly via style (mode-header border-bottom)
     const modeHeader = el('mode-header');
     if (modeHeader) modeHeader.style.borderBottomColor = mode.color;
 
-    // ACTION IMMÉDIATE
+    // --- ACTION IMMÉDIATE ---
     setText('immediate-action-text', mode.immediateAction || mode.objective);
 
-    // ACTION BLOCKS — compressed, 3–5 max
+    // --- ACTION BLOCKS ---
     renderActionBlocks(mode);
 
-    // INTERDICTIONS + VALIDATION — always visible
+    // --- INTERDICTIONS + VALIDATION (always visible) ---
     setText('interdictions-inline', mode.interdictionsShort || mode.interdictions.join(' · '));
     setText('validation-inline', mode.validationShort || mode.validation);
 
-    // DETAIL PANEL (hidden by default)
+    // --- DETAIL PANEL (hidden by default, populated now) ---
     renderDetailPanel(mode);
 
-    // RESET timer
-    updateTimerDisplay();
-
-    // Detail toggle button
+    // --- DETAIL TOGGLE BUTTON ---
     setupDetailToggle();
+
+    // --- TIMER DISPLAY ---
+    updateTimerDisplay();
   }
 
   // ============================================================
-  // RENDER ACTION BLOCKS — compressed 3–5 blocks
+  // RENDER ACTION BLOCKS — compressed 3–5 blocks row
   // ============================================================
   function renderActionBlocks(mode) {
     const container = el('action-blocks');
@@ -491,29 +481,33 @@
     container.innerHTML = '';
 
     const blocks = mode.blocks || [];
+    if (blocks.length === 0) return;
+
     const now = new Date();
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
-    // Determine which block is active based on anchor times
+    // Determine active block index based on anchor times
     let activeIndex = -1;
     blocks.forEach(function (block, i) {
       if (!block.anchor) return;
       const anchorMin = parseBlockStartMinutes(block.anchor);
       if (anchorMin === null) return;
-      const nextAnchorMin = (function () {
-        for (let j = i + 1; j < blocks.length; j++) {
+
+      // Find the next block that has an anchor
+      var nextAnchorMin = (function () {
+        for (var j = i + 1; j < blocks.length; j++) {
           if (blocks[j].anchor) return parseBlockStartMinutes(blocks[j].anchor);
         }
-        return 24 * 60; // end of day
+        return 24 * 60; // end of day fallback
       })();
+
       if (currentMinutes >= anchorMin && currentMinutes < nextAnchorMin) {
         activeIndex = i;
       }
     });
 
-    // If no anchor-based match, find first block without anchor as default active
+    // If no anchor-based match found, default to first block
     if (activeIndex === -1) {
-      // Heuristic: pick the first block that isn't clearly in the future
       activeIndex = 0;
     }
 
@@ -546,10 +540,10 @@
   // RENDER DETAIL PANEL (hidden by default)
   // ============================================================
   function renderDetailPanel(mode) {
-    // PLANNING
+    // Planning time blocks
     renderPlanning(mode);
 
-    // CORE
+    // Core list
     const coreList = el('core-list');
     if (coreList) {
       coreList.innerHTML = '';
@@ -560,7 +554,7 @@
       });
     }
 
-    // CRITICAL RULES
+    // Critical rules
     const criticalList = el('critical-list');
     if (criticalList) {
       criticalList.innerHTML = '';
@@ -571,15 +565,15 @@
       });
     }
 
-    // CHECKLISTS
+    // Checklists
     renderChecklist('start-checklist', mode.startChecklist, mode.id, 'start');
     renderChecklist('end-checklist', mode.endChecklist, mode.id, 'end');
 
-    // BEHAVIORAL LAYER
+    // Behavioral layer
     setText('beh-error', mode.classicError);
     setText('beh-exit', mode.exitSignal);
 
-    // NEXT MODES
+    // Next modes
     renderNextModes(mode);
     setText('transition-note', mode.transitionNote);
   }
@@ -592,25 +586,33 @@
     const panel = el('mode-details-panel');
     if (!btn || !panel) return;
 
-    // Reset state
+    // Always start hidden
     panel.style.display = 'none';
     btn.textContent = 'DÉTAILS ▾';
 
-    btn.onclick = function () {
+    // Remove any old listener by replacing the button clone
+    const newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+
+    newBtn.addEventListener('click', function () {
       const isVisible = panel.style.display !== 'none';
       panel.style.display = isVisible ? 'none' : 'block';
-      btn.textContent = isVisible ? 'DÉTAILS ▾' : 'MASQUER ▴';
-    };
+      newBtn.textContent = isVisible ? 'DÉTAILS ▾' : 'MASQUER ▴';
+      if (!isVisible) {
+        // Scroll detail panel into view smoothly
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
   }
 
   // ============================================================
-  // RENDER PLANNING
+  // PARSE BLOCK START MINUTES
+  // Accepts "HH:MM", "HH:MM–HH:MM", "HHhMM"
+  // Returns start time as total minutes from midnight, or null
   // ============================================================
-
-  // Parse "HH:MM" or "HH:MM–HH:MM" → returns start time as total minutes
   function parseBlockStartMinutes(timeStr) {
     if (!timeStr) return null;
-    // Take only the start time (before "–" if range)
+    // Take only start (before "–")
     const start = timeStr.split('–')[0].trim().replace('h', ':');
     const parts = start.split(':');
     if (parts.length < 2) return null;
@@ -620,56 +622,9 @@
     return h * 60 + m;
   }
 
-  function highlightCurrentPlanningBlock() {
-    const now = new Date();
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
-    const blocks = qsAll('.time-block');
-    if (!blocks.length) return;
-
-    // Build array of start times
-    const startTimes = blocks.map(function (b) {
-      return parseBlockStartMinutes(b.querySelector('.time-block-time').textContent);
-    });
-
-    let activeIndex = -1;
-    for (let i = 0; i < startTimes.length; i++) {
-      const t = startTimes[i];
-      if (t === null) continue;
-      const next = startTimes.slice(i + 1).find(function (v) { return v !== null; });
-      const end = (next !== undefined) ? next : t + 90;
-      if (currentMinutes >= t && currentMinutes < end) {
-        activeIndex = i;
-        break;
-      }
-    }
-
-    // If no active found but all times are past, mark last as past
-    blocks.forEach(function (b, i) {
-      b.classList.remove('time-block--active', 'time-block--past', 'time-block--next');
-      const t = startTimes[i];
-      if (t === null) return;
-
-      if (i === activeIndex) {
-        b.classList.add('time-block--active');
-      } else if (activeIndex === -1) {
-        // Nothing active yet — mark past items
-        const allFuture = startTimes.every(function (v) { return v === null || v > currentMinutes; });
-        if (!allFuture && t < currentMinutes) {
-          b.classList.add('time-block--past');
-        } else if (b === blocks[0] || (t !== null && t > currentMinutes)) {
-          // first upcoming = next
-          if (!blocks.some(function (bb) { return bb.classList.contains('time-block--next'); })) {
-            b.classList.add('time-block--next');
-          }
-        }
-      } else if (t < startTimes[activeIndex]) {
-        b.classList.add('time-block--past');
-      } else if (i === activeIndex + 1) {
-        b.classList.add('time-block--next');
-      }
-    });
-  }
-
+  // ============================================================
+  // RENDER PLANNING
+  // ============================================================
   function renderPlanning(mode) {
     const container = el('time-blocks');
     if (!container) return;
@@ -690,10 +645,58 @@
       container.appendChild(block);
     });
 
-    // Highlight immediately then every 60s
+    // Highlight current block then refresh every 60s
     highlightCurrentPlanningBlock();
     if (State._planningInterval) clearInterval(State._planningInterval);
     State._planningInterval = setInterval(highlightCurrentPlanningBlock, 60000);
+  }
+
+  function highlightCurrentPlanningBlock() {
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const blocks = qsAll('.time-block');
+    if (!blocks.length) return;
+
+    // Build array of start times from displayed time-block-time elements
+    const startTimes = blocks.map(function (b) {
+      const timeEl = b.querySelector('.time-block-time');
+      return timeEl ? parseBlockStartMinutes(timeEl.textContent) : null;
+    });
+
+    let activeIndex = -1;
+    for (let i = 0; i < startTimes.length; i++) {
+      const t = startTimes[i];
+      if (t === null) continue;
+      const next = startTimes.slice(i + 1).find(function (v) { return v !== null; });
+      const end = (next !== undefined) ? next : t + 90;
+      if (currentMinutes >= t && currentMinutes < end) {
+        activeIndex = i;
+        break;
+      }
+    }
+
+    blocks.forEach(function (b, i) {
+      b.classList.remove('time-block--active', 'time-block--past', 'time-block--next');
+      const t = startTimes[i];
+      if (t === null) return;
+
+      if (i === activeIndex) {
+        b.classList.add('time-block--active');
+      } else if (activeIndex === -1) {
+        const allFuture = startTimes.every(function (v) { return v === null || v > currentMinutes; });
+        if (!allFuture && t < currentMinutes) {
+          b.classList.add('time-block--past');
+        } else if (t !== null && t > currentMinutes) {
+          if (!blocks.some(function (bb) { return bb.classList.contains('time-block--next'); })) {
+            b.classList.add('time-block--next');
+          }
+        }
+      } else if (i < activeIndex) {
+        b.classList.add('time-block--past');
+      } else if (i === activeIndex + 1) {
+        b.classList.add('time-block--next');
+      }
+    });
   }
 
   // ============================================================
@@ -750,8 +753,7 @@
     const container = el(listId);
     if (!container) return;
 
-    const items = qsAll('.checklist-item', container);
-    items.forEach(function (item) {
+    qsAll('.checklist-item', container).forEach(function (item) {
       const key = item.getAttribute('data-key');
       if (key && !item.classList.contains('checked')) {
         item.classList.add('checked');
@@ -789,7 +791,6 @@
       btn.style.color = nextMode.color;
 
       btn.addEventListener('click', function () {
-        // Go back to home and pre-select this mode
         goHome();
         setTimeout(function () {
           selectMode(nextModeId);
@@ -815,7 +816,6 @@
     window.scrollTo(0, 0);
     renderLastModeIndicator();
 
-    // Keep mode color indicator but don't override
     if (State.currentMode) {
       document.body.setAttribute('data-mode', State.currentMode);
     }
@@ -827,7 +827,6 @@
   // HOME EVENT LISTENERS
   // ============================================================
   function setupHomeEventListeners() {
-    // Enter mode button
     const enterBtn = el('btn-enter-mode');
     if (enterBtn) {
       enterBtn.addEventListener('click', function () {
@@ -837,7 +836,6 @@
       });
     }
 
-    // Reset environment modal
     const resetBtn = el('btn-reset-env');
     if (resetBtn) {
       resetBtn.addEventListener('click', function () {
@@ -845,7 +843,6 @@
       });
     }
 
-    // Emergency modal
     const emergencyBtn = el('btn-emergency');
     if (emergencyBtn) {
       emergencyBtn.addEventListener('click', function () {
@@ -853,13 +850,11 @@
       });
     }
 
-    // Theme toggle
     const themeBtn = el('btn-theme-toggle');
     if (themeBtn) {
       themeBtn.addEventListener('click', toggleTheme);
     }
 
-    // Universal rules
     const universalBtn = el('btn-universal');
     if (universalBtn) {
       universalBtn.addEventListener('click', function () {
@@ -867,13 +862,12 @@
       });
     }
 
-    // Fullscreen
     const fsBtn = el('btn-fullscreen');
     if (fsBtn) {
       fsBtn.addEventListener('click', toggleFullscreen);
     }
 
-    // If a mode was active last session, allow re-entering
+    // If a mode was active last session, re-select it
     if (State.activeMode && MODES[State.activeMode]) {
       selectMode(State.activeMode);
     }
@@ -886,7 +880,6 @@
     // Back buttons
     const backBtn = el('btn-back');
     const backBtn2 = el('btn-back-2');
-
     if (backBtn) backBtn.addEventListener('click', goHome);
     if (backBtn2) backBtn2.addEventListener('click', goHome);
 
@@ -894,13 +887,13 @@
     const changeModeBtn = el('btn-change-mode');
     if (changeModeBtn) changeModeBtn.addEventListener('click', goHome);
 
-    // Execute button — plein écran action immédiate
+    // Execute overlay
     const executeBtn = el('btn-execute');
     if (executeBtn) {
       executeBtn.addEventListener('click', openExecuteOverlay);
     }
 
-    // Mode done → recovery
+    // Mode done → go home, suggest recovery
     const modeDoneBtn = el('btn-mode-done');
     if (modeDoneBtn) {
       modeDoneBtn.addEventListener('click', function () {
@@ -921,11 +914,10 @@
     const printBtn = el('btn-print');
     if (printBtn) printBtn.addEventListener('click', printProtocol);
 
-    // Timer controls
+    // Timer widget controls
     const timerStartBtn = el('btn-timer-start');
     const timerResetBtn = el('btn-timer-reset');
     const timerFsBtn = el('btn-timer-fullscreen');
-
     if (timerStartBtn) timerStartBtn.addEventListener('click', toggleTimer);
     if (timerResetBtn) timerResetBtn.addEventListener('click', resetTimer);
     if (timerFsBtn) timerFsBtn.addEventListener('click', openTimerFullscreen);
@@ -952,24 +944,23 @@
       });
     });
 
-    // Fullscreen timer controls
+    // Timer fullscreen controls
     const fsBtnStart = el('btn-fs-timer-start');
     const fsBtnReset = el('btn-fs-timer-reset');
     const fsBtnClose = el('btn-fs-timer-close');
-
     if (fsBtnStart) fsBtnStart.addEventListener('click', toggleTimer);
     if (fsBtnReset) fsBtnReset.addEventListener('click', resetTimer);
     if (fsBtnClose) fsBtnClose.addEventListener('click', closeTimerFullscreen);
   }
 
   // ============================================================
-  // EXECUTE OVERLAY — plein écran action immédiate
+  // EXECUTE OVERLAY — fullscreen on black
   // ============================================================
   function openExecuteOverlay() {
     const mode = State.activeMode ? MODES[State.activeMode] : null;
     if (!mode) return;
 
-    // Remove existing if any
+    // Remove existing overlay if any
     const existing = el('execute-overlay');
     if (existing) existing.remove();
 
@@ -981,12 +972,22 @@
 
     overlay.innerHTML =
       '<div class="execute-overlay-content">' +
-        '<div class="execute-overlay-mode" style="color:' + mode.color + '">' + escapeHtml(mode.name) + '</div>' +
-        '<div class="execute-overlay-action">' + escapeHtml(mode.immediateAction || mode.objective) + '</div>' +
-        '<div class="execute-overlay-validation">✓ ' + escapeHtml(mode.validationShort || mode.validation) + '</div>' +
+        '<div class="execute-overlay-mode" style="color:' + mode.color + '">' +
+          escapeHtml(mode.name) +
+        '</div>' +
+        '<div class="execute-overlay-action">' +
+          escapeHtml(mode.immediateAction || mode.objective) +
+        '</div>' +
+        '<div class="execute-overlay-validation">✓ ' +
+          escapeHtml(mode.validationShort || mode.validation) +
+        '</div>' +
         '<div class="execute-overlay-controls">' +
-          '<button class="btn-primary execute-overlay-start" id="execute-overlay-start">DÉMARRER TIMER</button>' +
-          '<button class="btn-ghost execute-overlay-close" id="execute-overlay-close">FERMER [Échap]</button>' +
+          '<button class="btn-primary execute-overlay-start" id="execute-overlay-start">' +
+            '[ DÉMARRER TIMER ' + State.timer.selectedPreset + ' MIN ]' +
+          '</button>' +
+          '<button class="btn-ghost execute-overlay-close" id="execute-overlay-close">' +
+            'FERMER [Échap]' +
+          '</button>' +
         '</div>' +
       '</div>';
 
@@ -1024,7 +1025,7 @@
     modal.style.display = 'flex';
     modal.setAttribute('aria-hidden', 'false');
 
-    // Focus trap — focus first interactive element
+    // Focus first interactive element
     setTimeout(function () {
       const focusable = modal.querySelector('button, [tabindex="0"]');
       if (focusable) focusable.focus();
@@ -1038,7 +1039,8 @@
       }
     });
 
-    announce('Modal ouvert : ' + (modal.getAttribute('aria-labelledby') ? (el(modal.getAttribute('aria-labelledby')) || {}).textContent || '' : ''));
+    const titleEl = modal.getAttribute('aria-labelledby') ? el(modal.getAttribute('aria-labelledby')) : null;
+    announce('Modal ouvert : ' + (titleEl ? titleEl.textContent : ''));
   }
 
   function closeModal(modalId) {
@@ -1049,7 +1051,7 @@
   }
 
   function setupModalListeners() {
-    // Close buttons in modals
+    // Close buttons
     qsAll('.modal-close').forEach(function (btn) {
       btn.addEventListener('click', function () {
         const modalId = this.getAttribute('data-modal');
@@ -1089,12 +1091,10 @@
         qsAll('.universal-tab').forEach(function (t) { t.classList.remove('active'); });
         this.classList.add('active');
 
-        // Hide all tab content
         qsAll('.universal-tab-content').forEach(function (content) {
           content.style.display = 'none';
         });
 
-        // Show target
         const targetContent = el('tab-' + tabId);
         if (targetContent) targetContent.style.display = 'block';
       });
@@ -1149,11 +1149,10 @@
       section.className = 'emergency-protocol';
       section.setAttribute('data-id', protocol.id);
 
-      // Header (toggle button)
       const header = document.createElement('button');
       header.className = 'emergency-protocol-header';
       header.innerHTML = [
-        '<span class="emergency-protocol-icon">' + (protocol.icon || '!') + '</span>',
+        '<span class="emergency-protocol-icon">' + escapeHtml(protocol.icon || '!') + '</span>',
         '<span>' + escapeHtml(protocol.name) + '</span>',
         '<span class="emergency-protocol-toggle">▼</span>',
       ].join('');
@@ -1162,17 +1161,14 @@
         section.classList.toggle('expanded');
       });
 
-      // Body
       const body = document.createElement('div');
       body.className = 'emergency-protocol-body';
 
-      // Symptom
       const symptomEl = document.createElement('div');
       symptomEl.className = 'emergency-symptom';
       symptomEl.textContent = protocol.symptom;
       body.appendChild(symptomEl);
 
-      // Immediate response
       const responseTitle = document.createElement('div');
       responseTitle.className = 'emergency-section-title';
       responseTitle.textContent = 'RÉPONSE IMMÉDIATE';
@@ -1189,7 +1185,6 @@
       });
       body.appendChild(steps);
 
-      // Cancel list
       if (protocol.cancel && protocol.cancel.length > 0) {
         const cancelTitle = document.createElement('div');
         cancelTitle.className = 'emergency-section-title';
@@ -1207,7 +1202,6 @@
         body.appendChild(cancelList);
       }
 
-      // Min vital
       if (protocol.minVital) {
         const minVitalEl = document.createElement('div');
         minVitalEl.className = 'emergency-minvital';
@@ -1255,9 +1249,7 @@
   }
 
   function setTimerPreset(minutes) {
-    if (State.timer.running) {
-      stopTimer();
-    }
+    if (State.timer.running) stopTimer();
     State.timer.selectedPreset = minutes;
     State.timer.total = minutes * 60;
     State.timer.remaining = State.timer.total;
@@ -1265,9 +1257,7 @@
     updateTimerDisplay();
 
     const timerWidget = qs('.timer-widget');
-    if (timerWidget) {
-      timerWidget.classList.remove('timer-running', 'timer-done');
-    }
+    if (timerWidget) timerWidget.classList.remove('timer-running', 'timer-done');
 
     const startBtn = el('btn-timer-start');
     if (startBtn) startBtn.textContent = 'DÉMARRER';
@@ -1383,17 +1373,18 @@
       ? (State.timer.remaining / State.timer.total) * 100
       : 100;
 
-    // Widget
+    // Widget display
     setText('timer-display', timeStr);
     const fill = el('timer-progress-fill');
     if (fill) fill.style.width = progressPercent + '%';
 
-    // Fullscreen
+    // Fullscreen display
     setText('timer-fs-display', timeStr);
     setText('timer-fs-label', 'TIMER — ' + totalStr);
     const fsFill = el('timer-fs-progress-fill');
     if (fsFill) fsFill.style.width = progressPercent + '%';
 
+    // Running state on fullscreen display
     if (State.timer.running) {
       const fsDisplay = el('timer-fs-display');
       if (fsDisplay) {
@@ -1513,7 +1504,7 @@
   }
 
   // ============================================================
-  // THEME TOGGLE
+  // THEME
   // ============================================================
   function setupTheme() {
     if (State.theme === 'light') {
@@ -1546,23 +1537,20 @@
   // ============================================================
   function setupKeyboardShortcuts() {
     document.addEventListener('keydown', function (e) {
-      // Ignore if typing in an input
+      // Ignore when typing in inputs
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
-      // Ignore if modifier keys (except shift for ?)
+      // Ignore modifier combos (except plain shift for ?)
       if (e.ctrlKey || e.altKey || e.metaKey) return;
 
       const key = e.key;
 
-      // Mode selection 1–7
+      // Mode selection 1–7 (home screen only)
       if (key >= '1' && key <= '7') {
         const index = parseInt(key, 10) - 1;
         const modeId = MODE_ORDER[index];
-        if (modeId) {
-          // If on home, select mode
-          if (State.activeScreen === 'home') {
-            selectMode(modeId);
-          }
+        if (modeId && State.activeScreen === 'home') {
+          selectMode(modeId);
           e.preventDefault();
         }
         return;
@@ -1579,14 +1567,14 @@
         case 'Escape':
           e.preventDefault();
           // Close execute overlay first
-          const execOverlay = el('execute-overlay');
+          var execOverlay = el('execute-overlay');
           if (execOverlay) {
             execOverlay.remove();
             document.body.classList.remove('focus-mode');
             break;
           }
-          // Close modals
-          const openModals = qsAll('.modal-overlay').filter(function (m) {
+          // Close open modals
+          var openModals = qsAll('.modal-overlay').filter(function (m) {
             return m.style.display !== 'none';
           });
           if (openModals.length > 0) {
@@ -1614,8 +1602,7 @@
         case 'T':
           e.preventDefault();
           if (State.activeScreen === 'mode') {
-            // Focus timer widget
-            const timerWidget = el('timer-widget');
+            var timerWidget = el('timer-widget');
             if (timerWidget) timerWidget.scrollIntoView({ behavior: 'smooth' });
           }
           break;
@@ -1631,7 +1618,6 @@
           break;
 
         case ' ':
-          // Space bar = toggle timer (only if not focused on button)
           if (e.target.tagName !== 'BUTTON' && State.activeScreen === 'mode') {
             e.preventDefault();
             toggleTimer();
